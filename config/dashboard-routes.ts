@@ -4,6 +4,9 @@ export const dashboardRoutes = {
     },
     gift : {
         title : 'هدیه ها'
+    },
+    courses: {
+        title: 'دوره های آموزشی'
     }
 } as const;
 
