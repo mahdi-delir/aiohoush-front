@@ -2,14 +2,14 @@ export interface VideoItem {
     id: number;
     playerUrl: string;
     title: string;
+    short_desc?: string;
+    desc?: string;
     slug: string;
-    description?: string
+    description?: string;
+    has_source_code: boolean;
+    has_homework: boolean;
 }
 
-export interface GiftVideoResponse {
-    data: VideoItem
-}
-
-export interface VideosResponse {
-    data: VideoItem[]
+export interface VideoResponse {
+    videos: VideoItem[]
 }

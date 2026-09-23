@@ -91,7 +91,7 @@ export default function MainItems() {
     if (!item.permission) {
       return true;
     }
-    return can(me.permissions, item.permission);
+    return can(me.data.permissions, item.permission);
   });
 
   return (

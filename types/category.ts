@@ -4,6 +4,7 @@ export type CategoryIcon =
   | "resume"
   | "calc"
   | "diabetes";
+  
 export interface CategoryItem {
   id: number;
   title: string;
@@ -12,5 +13,5 @@ export interface CategoryItem {
 }
 
 export interface GiftCategoryResponse {
-  data: CategoryItem[];
+  categories: CategoryItem[];
 }

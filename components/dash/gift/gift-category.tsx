@@ -23,7 +23,7 @@ export default function GiftCategory() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const { data: categories } = useGetGiftCategory();
+  const { data: res } = useGetGiftCategory();
 
   function handleCategorySelect(category: CategoryItem) {
     const params = new URLSearchParams(searchParams);
@@ -33,7 +33,7 @@ export default function GiftCategory() {
 
   return (
     <HorizentalFilter
-      categories={categories?.data ?? []}
+      categories={res?.data?.categories ?? []}
       title="دسته‌بندی هدیه‌ها"
       icons={categoryIcon}
       onSelect={handleCategorySelect}
