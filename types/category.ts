@@ -3,7 +3,12 @@ export type CategoryIcon =
   | "google"
   | "resume"
   | "calc"
-  | "diabetes";
+  | "diabetes"
+  | "school"
+  | "code"
+  | "chatbot"
+  | "drawing"
+  | "web";
   
 export interface CategoryItem {
   id: number;
@@ -12,6 +17,6 @@ export interface CategoryItem {
   slug: string
 }
 
-export interface GiftCategoryResponse {
+export interface CategoryResponse {
   categories: CategoryItem[];
 }

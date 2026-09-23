@@ -1,12 +1,35 @@
-export const mockCourseCat = {
+import { CategoryResponse } from "@/types/category";
+import { ApiResponse } from "@/types/global";
+
+export const mockCourseCat: ApiResponse<CategoryResponse> = {
   success: true,
   message: "دریافت اطلاعات با موفقیت انجام شد.",
   detailed_message: "این پیام اگر api موفق نبود می آید",
   data: {
     categories: [
       {
-        id: 1,
-        title: "",
+        id: 2,
+        title: "طراحی وب",
+        icon: 'web',
+        slug: 'web'
+      },
+      {
+        id: 3,
+        title: "برنامه نویسی",
+        icon: 'code',
+        slug: 'programming'
+      },
+      {
+        id: 4,
+        title: "هوش مصنوعی",
+        icon: 'chatbot',
+        slug: 'ai'
+      },
+      {
+        id: 5,
+        title: "مهارت های کاربردی",
+        icon: 'drawing',
+        slug: 'skills'
       },
     ],
   },

@@ -1,6 +1,5 @@
-import GiftCategory from "@/components/dash/gift/gift-category";
+import GiftCategory from "@/components/dash/gift/category";
 import GiftVideo from "@/components/dash/gift/gift-video";
-import Input from "@/components/ui/text-input";
 
 export default function GiftPage() {
   return (

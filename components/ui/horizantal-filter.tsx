@@ -1,13 +1,13 @@
 import type { CategoryItem } from "@/types/category";
 import Image, { ImageProps } from "next/image";
 
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import LiquidBg from "./liquid-bg";
 
 interface categoryListProps {
   categories: CategoryItem[];
   title?: string;
   icons: Record<string, ImageProps["src"]>;
-  onSelect?: (category: CategoryItem) => void;
   selectedFilter?: string;
 }
 
@@ -15,9 +15,19 @@ export function HorizentalFilter({
   categories,
   title,
   icons,
-  onSelect,
-  selectedFilter,
 }: categoryListProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const selectedFilter = searchParams?.get("category");
+
+  function handleCategorySelect(category: CategoryItem) {
+    const params = new URLSearchParams(searchParams);
+    params.set("category", category.slug);
+    router.replace(`${pathname}?${params.toString()}`);
+  }
+
   return (
     <section>
       {title && <h3 className="font-bold mb-4">{title}</h3>}
@@ -28,7 +38,7 @@ export function HorizentalFilter({
             <button
               type="button"
               className="flex flex-col items-center  min-w-20"
-              onClick={() => onSelect?.(category)}
+              onClick={() => handleCategorySelect(category)}
               key={category.id}
             >
               <LiquidBg
