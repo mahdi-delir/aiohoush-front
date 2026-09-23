@@ -9,6 +9,8 @@ export const mockMe: ApiResponse<MeResponse> = {
   detailed_message:
     "این پیام در حالت هایی خواهد آمد که ارور داده و ارور دارای توضیحات است.",
 
+  called_by: "webapp",
+  
   data: {
     user: {
       id: 1,
