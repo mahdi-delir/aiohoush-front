@@ -4,7 +4,7 @@ import { ApiResponse } from "@/types/global";
 export const mockGiftCat: ApiResponse<CategoryResponse> = {
   success: true,
   message: "دریافت اطلاعات با موفقیت انجام شد.",
-  detailed_message: "این پیام اگر api موفق نبود می آید",
+  detaile: "این پیام اگر api موفق نبود می آید",
   called_by: "webapp",
   data: {
     categories: [

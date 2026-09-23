@@ -1,13 +1,13 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { useGetGiftVideo } from "@/features/hooks/use-giftvideo";
+import { useGetVideo } from "@/features/hooks/use-video";
 import { Video } from "@/components/ui/video";
 export default function GiftVideo() {
 
   const searchParams = useSearchParams();
   const category = searchParams.get("category") ?? undefined;
   
-  const { data: res, isPending, isError } = useGetGiftVideo(category);
+  const { data: res, isPending, isError } = useGetVideo(category);
   
   if (!category) {
     return (
@@ -30,9 +30,8 @@ export default function GiftVideo() {
       </div>
     );
   }
-  const video = res.data.videos.find((item) => item.slug === category);
   
-  if (!video) {
+  if (!res.data.video) {
     return (
       <div className="bg-card-bg flex aspect-video items-center justify-center rounded-square">
         <span>ویدیو یافت نشد</span>
@@ -41,6 +40,6 @@ export default function GiftVideo() {
   }
   
   return (
-    <Video item={video}/>
+    <Video item={res.data.video}/>
   );
 }

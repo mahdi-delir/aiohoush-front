@@ -4,10 +4,15 @@ export interface CourseListItem {
     title: string;
     has_access: boolean;
     wathced_percent?: number;
-    duration: number;
+    duration: string;
     level: string;
+    category?: string;
+    slug: string;
 }
 
+
 export interface CourseListResponse {
+    category: string,
+    slug: string,
     courses: CourseListItem[]
 }

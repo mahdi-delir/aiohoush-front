@@ -1,4 +1,5 @@
 import CourseCategoryFilter from "@/components/dash/courses/category";
+import CourseVideoList from "@/components/dash/courses/courses";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/text-input";
 import Image from "next/image";
@@ -34,7 +35,8 @@ export default function Course() {
         </div>
       </section>
       <CourseCategoryFilter />
-
+      <CourseVideoList />
+      
     </div>
   );
 }
