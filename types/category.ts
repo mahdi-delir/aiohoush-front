@@ -13,6 +13,7 @@ export type CategoryIcon =
 export interface CategoryItem {
   id: number;
   title: string;
+  en_title?: string;
   icon: CategoryIcon;
   slug: string
 }

@@ -16,6 +16,7 @@
   --color-text-muted: #94a3b8;
 
   --color-danger: #dc2626;
+  --color-danger-bg: #361a1a;
   --color-approve: #49e2c8;
   --color-approve-bg: #012e34;
 
@@ -45,6 +46,7 @@
   --color-approve: var(--color-approve);
 
   --color-approve-bg: var(--color-approve-bg);
+  --color-danger-bg: var(--color-danger-bg);
 
   /* Radius */
   --radius-icon: var(--radius-icon);

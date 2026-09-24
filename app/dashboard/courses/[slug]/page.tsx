@@ -1,10 +1,70 @@
-export default function CoursePage() {
+import { cache } from "react";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import {
+  QueryClient,
+  dehydrate,
+  HydrationBoundary,
+} from "@tanstack/react-query";
+
+import { courseQueryOptions } from "@/features/queries/course-query";
+import CourseContent from "@/components/dash/courses/course-content";
+
+type CoursePageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+// نتیجه بین صفحه و متادیتا، در همان درخواست سرور، مشترک است.
+const prepareCourse = cache(async (slug: string) => {
+  const queryClient = new QueryClient();
+  const options = courseQueryOptions(slug);
+
+  await queryClient.prefetchQuery(options);
+
+  // prefetchQuery خطا را throw نمی‌کند؛ باید وضعیت را بررسی کنیم.
+  const state = queryClient.getQueryState(options.queryKey);
+
+  if (state?.status === "error") {
+    throw state.error;
+  }
+
+  const res = queryClient.getQueryData(options.queryKey);
+
+  if (res === undefined) {
+    throw new Error("Course query returned no data");
+  }
+
+  if (res === null) {
+    notFound();
+  }
+
+  return {
+    course: res.data,
+    dehydratedState: dehydrate(queryClient),
+  };
+});
+
+export async function generateMetadata({
+  params,
+}: CoursePageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const { course } = await prepareCourse(slug);
+
+  return {
+    title: `${course.course.title} | آیوهوش`,
+    description: course.course.short_description,
+  };
+}
+
+export default async function CoursePage({
+  params,
+}: CoursePageProps) {
+  const { slug } = await params;
+  const { dehydratedState } = await prepareCourse(slug);
+
   return (
-    <div className="flex flex-col gap-8">
-      <section>
-        <h2 className="text-center font-extrabold text-2xl">دوره کامل HTML</h2>
-      </section>
-      
-    </div>
+    <HydrationBoundary state={dehydratedState}>
+      <CourseContent slug={slug} />
+    </HydrationBoundary>
   );
 }

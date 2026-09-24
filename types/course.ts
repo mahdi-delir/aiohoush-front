@@ -1,21 +1,46 @@
-export interface Episod {
-    id: number;
-    title: string;
-    subject: string;
-    duration: string;
-    wathced_percent: number;
-    cover: string;
+import { VideoItem } from "./video";
+
+export interface Season {
+  title: string;
+  subject: string;
+  duration: string;
+  episod_count: number;
+  episods: VideoItem[];
+}
+
+export interface CourseCategory {
+  en: string;
+  fa: string;
+}
+
+export interface CourseInfo {
+  id: number;
+  title: string;
+  short_description: string;
+  description: string;
+  cover: string;
+  duration: string;
+  episod_count: number;
+  season_count: number;
+  level: string;
+  has_access: boolean;
+  slug: string;
+  categories?: CourseCategory[];
+  watched_percent?: number;
 }
 
 export interface Course {
-    id: number;
-    title: string;
-    description: string;
-    intro_video: string;
-    cover: string;
-    duration: string;
-    episod_count: number;
-    level: string;
-    has_access: boolean;
-    episods: Episod[];
+  course: CourseInfo;
+  seasons: Season[];
+}
+
+export interface CourseList {
+  courses: CourseInfo[];
+}
+
+export interface CategoriedCourse {
+  fa_category: string;
+  en_category: string;
+  slug?: string;
+  courses: CourseInfo[];
 }

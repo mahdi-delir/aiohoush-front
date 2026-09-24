@@ -36,7 +36,6 @@ export default function Course() {
       </section>
       <CourseCategoryFilter />
       <CourseVideoList />
-      
     </div>
   );
 }

@@ -1,10 +1,7 @@
+"use client";
 import { useQuery } from "@tanstack/react-query";
-import { getVideo } from "../api/get-video";
 
-export function useGetVideo(category?: string) {
-  return useQuery({
-    queryKey: ["giftvideo", category],
-    queryFn: () => getVideo(category!),
-    enabled: !!category,
-  });
+import { videoQueryOptions } from "../queries/video-query";
+export function useGetVideo(slug: string, id?: number, order?: number) {
+  return useQuery(videoQueryOptions(slug, id , order));
 }

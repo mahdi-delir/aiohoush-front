@@ -6,7 +6,6 @@ export const mockCourseCat: ApiResponse<CategoryResponse> = {
   message: "دریافت اطلاعات با موفقیت انجام شد.",
   detaile: "این پیام اگر api موفق نبود می آید",
   called_by: "webapp",
-
   data: {
     categories: [
       {
