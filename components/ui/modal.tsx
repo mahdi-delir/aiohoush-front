@@ -12,6 +12,7 @@ interface ModalProps {
   title?: string;
   closeOnBackdrop?: boolean;
   className?: string;
+  closeButton?: boolean;
 }
 export function Modal({
   open,
@@ -19,6 +20,7 @@ export function Modal({
   children,
   title,
   closeOnBackdrop = true,
+  closeButton = true,
   className,
 }: ModalProps) {
   useEffect(() => {
@@ -43,7 +45,7 @@ export function Modal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 bg-black/50 flex justify-end items-center"
       onMouseDown={() => {
         if (closeOnBackdrop) {
           onClose();
@@ -55,7 +57,7 @@ export function Modal({
         aria-modal="true"
         aria-label={title}
         className={cn(
-          "w-full rounded-square p-4 max-w-xl shadow-xl",
+          "w-full rounded-square p-4 max-w-xl shadow-2xl",
           className,
         )}
         onMouseDown={(event) => {
@@ -66,16 +68,18 @@ export function Modal({
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-bold">{title}</h2>
 
-            <Button
-              variant="danger"
-              size="sm"
-              type="button"
-              onClick={onClose}
-              aria-label="بستن"
-              className="w-fit"
-            >
-              ✕
-            </Button>
+            {closeButton && (
+              <Button
+                variant="danger"
+                size="sm"
+                type="button"
+                onClick={onClose}
+                aria-label="بستن"
+                className="w-fit"
+              >
+                ✕
+              </Button>
+            )}
           </div>
         )}
 

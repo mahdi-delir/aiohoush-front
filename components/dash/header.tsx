@@ -8,11 +8,14 @@ import {
 } from "@/config/dashboard-routes";
 import Menu from "@/assets/puffy-icons/menu.svg";
 import Bell from "@/assets/puffy-icons/bell.svg";
-import Search from "@/assets/puffy-icons/search.svg";
 import Left from "@/assets/puffy-icons/left.svg";
 import { useRouter } from "next/navigation";
+import { Modal } from "../ui/modal";
+import { useState } from "react";
+import MenuItems from "./menu-item";
 
 export default function DashboardHeader() {
+  const [open, setOpen] = useState(false);
   const segments = useSelectedLayoutSegments();
   const routeKey = segments.join("/");
   const router = useRouter();
@@ -25,7 +28,7 @@ export default function DashboardHeader() {
   return (
     <header className="flex justify-between items-center">
       <div className="flex items-center gap-4">
-        <Image src="../logo.svg" width={28} height={28} alt="aiohoush-logo" />
+        <Image src="/logo.svg" width={28} height={28} alt="aiohoush-logo" />
         <span className="text-white">{currentRoute.title}</span>
       </div>
       <div className="flex flex-row-reverse justify-start gap-4">
@@ -36,6 +39,7 @@ export default function DashboardHeader() {
             width={28}
             height={28}
             className="text-white"
+            onClick={() => setOpen(true)}
           />
         )}
 
@@ -55,6 +59,12 @@ export default function DashboardHeader() {
           <Image src={Search} alt="search-icon" width={28} height={28} />
         )} */}
       </div>
+      <Modal
+        children={<MenuItems />}
+        open={open}
+        onClose={() => setOpen(false)}
+        className="rounded-bl-none rounded-tl-none max-w-2/3 h-full bg-element-bg"
+      />
     </header>
   );
 }

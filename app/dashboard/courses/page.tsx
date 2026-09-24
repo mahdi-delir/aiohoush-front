@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export default function Course() {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-8">
       <Input type="search" placeholder="جست‌وجو در دوره‌ها" />
       <section className="bg-card-bg w-full rounded-square flex justify-between p-4 gap-4">
         <div className="w-2/3 flex flex-col gap-4">

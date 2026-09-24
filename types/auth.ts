@@ -2,6 +2,7 @@ export interface CurrentUser {
     id: number;
     first_name: string;
     last_name: string;
+    mobile: string;
 }
 
 export interface UserData {

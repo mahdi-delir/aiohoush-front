@@ -16,6 +16,7 @@ export const mockMe: ApiResponse<MeResponse> = {
       id: 1,
       first_name: "مهدی",
       last_name: "دلیر",
+      mobile: "09914174798"
     },
 
     groups: ["Teacher", "Employee", "CEO", "Student"],

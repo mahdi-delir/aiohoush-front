@@ -1,5 +1,6 @@
 import { CourseListItem } from "@/types/course-list";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 type CourseListProp = {
   title: string;
@@ -7,13 +8,24 @@ type CourseListProp = {
 };
 
 export default function CourseList({ title, list }: CourseListProp) {
+  const router = useRouter();
+
+  function handleCourseSelect(slug: string) {
+    if (!slug) return;
+    router.push(`/dashboard/courses/${slug}`);
+  }
+
   return (
     <section>
-      <h2>{title}</h2>
+      <h2 className="font-bold text-xl">{title}</h2>
       <ul>
         {list.map((item) => {
           return (
-            <li key={item.id} className="bg-card-bg my-4 rounded-square h-36">
+            <li
+              key={item.id}
+              className="bg-card-bg my-4 rounded-square h-36"
+              onClick={() => handleCourseSelect(item.slug)}
+            >
               <div className="p-4 flex justify-between h-full">
                 <div className="w-2/3">
                   <h2 className="font-bold text-xl">{item.title}</h2>

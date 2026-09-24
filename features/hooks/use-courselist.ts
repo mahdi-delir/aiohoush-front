@@ -4,6 +4,7 @@ import { getCourseList } from "../api/get-courseList";
 export function useCourseList(category: string){
     return useQuery({
         queryFn: () => getCourseList(category),
-        queryKey: ['courseList', category]
+        queryKey: ['courseList', category],
+        enabled: !!category
     })
 }

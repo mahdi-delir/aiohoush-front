@@ -102,7 +102,7 @@ export default function MainItems() {
             className="flex flex-col items-center justify-center aspect-square"
             key={item.href}
           >
-            <Link href={`dashboard/${item.href}`} className="flex flex-col items-center">
+            <Link href={`dashboard${item.href}/`} className="flex flex-col items-center">
               <LiquidBg className="p-4 w-fit">
                 <Image
                   src={item.icon}

@@ -10,13 +10,13 @@ export default function Hero() {
   const { data: me, isPending, isError } = useMe();
   return (
     <section className="min-h-44 overflow-hidden rounded-square bg-card-bg">
-      {me?.user_data?.has_course ? (
+      {me?.data?.user_data?.has_course ? (
         <div className="flex flex-col p-4 gap-4">
           <div className="flex justify-between">
             <div className="flex flex-col justify-center">
               <h3 className="text-primary-green">دوره فعال شما</h3>
               <h2 className="text-xl font-semibold text-white">
-                {me?.user_data?.active_courses?.[0]?.title ??
+                {me?.data?.user_data?.active_courses?.[0]?.title ??
                   "شما دوره فعالی ندارید"}
               </h2>
             </div>
@@ -33,23 +33,26 @@ export default function Hero() {
               <div className="text-text-muted">
                 <span>درس </span>
                 <span>
-                  {me?.user_data?.active_courses?.[0]?.current_session}
+                  {me?.data?.user_data?.active_courses?.[0]?.current_session}
                 </span>
                 <span> از </span>
-                <span>{me?.user_data?.active_courses?.[0]?.all_sessions}</span>
+                <span>
+                  {me?.data?.user_data?.active_courses?.[0]?.all_sessions}
+                </span>
               </div>
 
               <div className="text-primary-green">
                 <span>
-                  {me?.user_data?.active_courses?.[0]?.compleated_percent}% کامل
-                  شده
+                  {me?.data?.user_data?.active_courses?.[0]?.compleated_percent}
+                  % کامل شده
                 </span>
               </div>
             </div>
 
             <StatusBar
               percent={
-                me?.user_data?.active_courses?.[0]?.compleated_percent ?? 0
+                me?.data?.user_data?.active_courses?.[0]?.compleated_percent ??
+                0
               }
             />
           </div>
@@ -58,7 +61,7 @@ export default function Hero() {
             <Button>ادامه یادگیری</Button>
           </div>
         </div>
-      ) : me?.user_data?.watched_gift ? (
+      ) : me?.data?.user_data?.watched_gift ? (
         <div className="">
           <h2>اینجا قراره پری عکس بده</h2>
           <p>عکس برای کسانی که هدیه رو دیدن ولی دوره ای نخریدن</p>
