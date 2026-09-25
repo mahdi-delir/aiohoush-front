@@ -3,6 +3,7 @@ import CourseVideoList from "@/components/dash/courses/courses";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/text-input";
 import Image from "next/image";
+import { Suspense } from "react";
 
 export default function Course() {
   return (
@@ -35,7 +36,9 @@ export default function Course() {
         </div>
       </section>
       <CourseCategoryFilter />
-      <CourseVideoList />
+      <Suspense fallback={null}>
+        <CourseVideoList />
+      </Suspense>
     </div>
   );
 }

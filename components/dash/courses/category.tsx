@@ -7,6 +7,7 @@ import Web from "@/assets/puffy-icons/web.svg";
 import Programming from "@/assets/puffy-icons/code.svg";
 import AI from "@/assets/puffy-icons/chatbot.svg";
 import Skills from "@/assets/puffy-icons/microphone.svg";
+import { Suspense } from "react";
 
 export const categoryIcon = {
   school: All,
@@ -17,15 +18,15 @@ export const categoryIcon = {
 };
 
 export default function CourseCategoryFilter() {
-
-
   const { data: res, isPending, isError } = useCourseCategory();
 
   return (
-    <HorizentalFilter
-      categories={res?.data?.categories ?? []}
-      icons={categoryIcon}
-      title="دسته‌بندی دوره‌ها"
-    />
+    <Suspense fallback={null}>
+      <HorizentalFilter
+        categories={res?.data?.categories ?? []}
+        icons={categoryIcon}
+        title="دسته‌بندی دوره‌ها"
+      />
+    </Suspense>
   );
 }

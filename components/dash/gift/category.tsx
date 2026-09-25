@@ -7,6 +7,7 @@ import Calculator from "@/assets/puffy-icons/calculator.svg";
 import Glucometer from "@/assets/puffy-icons/glucometer.svg";
 import { HorizentalFilter } from "@/components/ui/horizantal-filter";
 import { useGetGiftCategory } from "@/features/hooks/use-giftcategory";
+import { Suspense } from "react";
 
 export const categoryIcon = {
   start: Code,
@@ -17,15 +18,15 @@ export const categoryIcon = {
 };
 
 export default function Category() {
-
   const { data: res } = useGetGiftCategory();
 
-
   return (
-    <HorizentalFilter
-      categories={res?.data?.categories ?? []}
-      title="دسته‌بندی هدیه‌ها"
-      icons={categoryIcon}
-    />
+    <Suspense fallback={null}>
+      <HorizentalFilter
+        categories={res?.data?.categories ?? []}
+        title="دسته‌بندی هدیه‌ها"
+        icons={categoryIcon}
+      />
+    </Suspense>
   );
 }
