@@ -67,28 +67,27 @@ export default function CourseContent({ slug }: CourseContentProps) {
       </section>
 
       <section className="flex justify-around border-b border-text-muted/30">
-        <span className="border-b-2 border-primary-green text-lg px-4">
+        <span className="border-b-2 border-primary-green px-4">
           جلسات‌دوره
         </span>
-        <span className="text-lg px-4">درباره‌دوره</span>
+        <span className="px-4">درباره‌دوره</span>
       </section>
       <section>
-        <ul>
+        <ul className="flex flex-col gap-4">
           {course.seasons.map((season, i) => {
             const isOpen = !!openSeasons[i];
 
             return (
-              <li key={i}>
-                <div className="flex justify-between items-center">
+              <li key={i} className="border-b border-text-muted/50 py-2">
+                <div
+                  className="flex justify-between items-center"
+                  onClick={() => toggleSeason(i)}
+                  aria-expanded={isOpen}
+                  aria-controls={`season-episodes-${i}`}
+                  aria-label={`${isOpen ? "بستن" : "باز کردن"} ${season.title}`}
+                >
                   <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => toggleSeason(i)}
-                      aria-expanded={isOpen}
-                      aria-controls={`season-episodes-${i}`}
-                      aria-label={`${isOpen ? "بستن" : "باز کردن"} ${season.title}`}
-                      className="bg-element-bg p-2 rounded-full cursor-pointer"
-                    >
+                    <div className="bg-element-bg p-2 rounded-full cursor-pointer">
                       <Image
                         src={Left}
                         width={20}
@@ -98,14 +97,14 @@ export default function CourseContent({ slug }: CourseContentProps) {
                           isOpen ? "-rotate-90" : ""
                         }`}
                       />
-                    </button>
+                    </div>
 
-                    <h3 className="font-bold">{season.title}</h3>
-                    <span className="text-text-muted">{season.subject}</span>
+                    <h3 className="font-bold text-sm">{season.title}</h3>
+                    <span className="text-text-muted text-sm">{season.subject}</span>
                   </div>
 
-                  <span className="text-text-muted text-sm">
-                    {season.episod_count} جلسه {season.duration}
+                  <span className="text-text-muted text-xs">
+                    {season.episod_count} جلسه | {season.duration}
                   </span>
                 </div>
 
@@ -119,7 +118,9 @@ export default function CourseContent({ slug }: CourseContentProps) {
                         className={`flex items-center justify-between my-2 p-2 border-b border-text-muted/50 rounded-icon ${selectedEpisode?.id === episod.id ? "bg-card-bg" : ""}`}
                       >
                         <div className="flex items-center gap-1">
-                          <span className={`text-sm px-3 py-1.5 rounded-full w-fit ${selectedEpisode?.id === episod.id ? "bg-primary-green" : "bg-element-bg"}`}>
+                          <span
+                            className={`text-sm px-3 py-1.5 rounded-full w-fit ${selectedEpisode?.id === episod.id ? "bg-primary-green" : "bg-element-bg"}`}
+                          >
                             {episod.order}
                           </span>
                           <h4>{episod.short_desc}</h4>

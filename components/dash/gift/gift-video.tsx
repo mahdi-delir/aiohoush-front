@@ -5,7 +5,7 @@ import { Video } from "@/components/ui/video";
 export default function GiftVideo() {
 
   const searchParams = useSearchParams();
-  const category = searchParams.get("category") ?? undefined;
+  const category = searchParams.get("category") ?? "";
   
   const { data: res, isPending, isError } = useGetVideo(category);
   
@@ -31,7 +31,7 @@ export default function GiftVideo() {
     );
   }
   
-  if (!res.data.video) {
+  if (!res.data) {
     return (
       <div className="bg-card-bg flex aspect-video items-center justify-center rounded-square">
         <span>ویدیو یافت نشد</span>
@@ -40,6 +40,6 @@ export default function GiftVideo() {
   }
   
   return (
-    <Video item={res.data.video}/>
+    <Video item={res.data}/>
   );
 }
