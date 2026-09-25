@@ -13,6 +13,7 @@ export interface VideoItem {
     wathced_percent?: number,
     cover: string;
     source_code?: string;
+    source_code_url?: string
 }
 
 export interface VideoResponse {

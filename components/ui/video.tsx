@@ -3,7 +3,7 @@
 import Hls from "hls.js";
 import { useEffect, useRef, useState, type VideoHTMLAttributes } from "react";
 
-import { cn } from "@/lib/utils";
+import { cn, downloadFile } from "@/lib/utils";
 import Button from "./button";
 import { VideoItem } from "@/types/video";
 
@@ -14,11 +14,7 @@ interface VideoPlayerProps extends Omit<
   item: VideoItem;
 }
 
-export function Video({
-  item,
-  className,
-  ...videoProps
-}: VideoPlayerProps) {
+export function Video({ item, className, ...videoProps }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasError, setHasError] = useState(false);
 
@@ -72,15 +68,20 @@ export function Video({
         className={cn("aspect-video w-full", className)}
         {...videoProps}
       />
-      <div className="flex gap-2 justify-end">
+      <div className="flex justify-end">
         {item?.has_source_code && (
-          <Button variant="secondary" size="sm" className="w-fit m-4">
+          <Button
+            variant="secondary"
+            size="sm"
+            className="w-fit m-4"
+            onClick={() => downloadFile(item.source_code_url ?? "")}
+          >
             دریافت سورس کد
           </Button>
         )}
         {item?.has_homework && (
           <Button variant="secondary" size="sm" className="w-fit m-4">
-            ارسال تمرینات
+            ارسال تمرین
           </Button>
         )}
       </div>

@@ -39,6 +39,7 @@ export const mockCourse: ApiResponse<Course> = {
             description:
               "در این جلسه تمامی موارد مرتبط با HTML توضیح داده شده است.",
             has_source_code: true,
+            source_code_url: 'https://api.aiohosh.com/public/media/html-course/01/source.zip',
             has_homework: true,
             is_public: true,
             duration: "49 دقیقه",
