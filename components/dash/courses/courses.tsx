@@ -19,5 +19,5 @@ export default function CourseVideoList() {
   
   const title = allCategories?.find((item) => item.slug === category)?.title ?? "دوره‌ها";
 
-  return <CourseList title={title} list={res?.data.courses ?? []} />;
+  return <CourseList title={title} courses={res?.data.courses ?? []} />;
 }
