@@ -1,13 +1,13 @@
-import { CourseListItem } from "@/types/course-list";
+import { CourseList } from "@/types/course";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 type CourseListProp = {
   title: string;
-  list: CourseListItem[];
+  list: CourseList;
 };
 
-export default function CourseList({ title, list }: CourseListProp) {
+export default function CourseListC({ title, list }: CourseListProp) {
   const router = useRouter();
 
   function handleCourseSelect(slug: string) {
@@ -19,7 +19,7 @@ export default function CourseList({ title, list }: CourseListProp) {
     <section>
       <h2 className="font-bold text-xl">{title}</h2>
       <ul>
-        {list.map((item) => {
+        {list.courses.map((item) => {
           return (
             <li
               key={item.id}
