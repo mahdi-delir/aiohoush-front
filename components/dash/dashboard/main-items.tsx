@@ -34,7 +34,7 @@ const menuItems = [
   },
   {
     title: "هوش مصنوعی",
-    href: "/ai-agents",
+    href: "/ai",
     icon: ChatBot,
     permission: PERMISSIONS.AI_VIEW,
     order: 4,
