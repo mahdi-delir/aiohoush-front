@@ -14,14 +14,12 @@ type CoursePageProps = {
   params: Promise<{ slug: string }>;
 };
 
-// نتیجه بین صفحه و متادیتا، در همان درخواست سرور، مشترک است.
 const prepareCourse = cache(async (slug: string) => {
   const queryClient = new QueryClient();
   const options = courseQueryOptions(slug);
 
   await queryClient.prefetchQuery(options);
 
-  // prefetchQuery خطا را throw نمی‌کند؛ باید وضعیت را بررسی کنیم.
   const state = queryClient.getQueryState(options.queryKey);
 
   if (state?.status === "error") {
