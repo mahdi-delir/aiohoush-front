@@ -27,19 +27,18 @@ export default function CourseListC({ title, courses }: CourseListProp) {
               onClick={() => handleCourseSelect(item.slug)}
             >
               <div className="p-4 flex justify-between h-full">
-                <div className="w-2/3">
+                <div className="w-2/3 flex flex-col justify-center gap-2">
                   <h2 className="font-bold text-xl">{item.title}</h2>
                   <p>
                     {item.duration} {item.level}
                   </p>
                 </div>
-                <div className="overflow-hidden flex justify-center items-center min-h-full w-1/3 bg-element-bg rounded-square">
+                <div className="relative overflow-hidden max-w-1/3 bg-element-bg rounded-icon aspect-square">
                   <Image
                     src={item.cover}
-                    width={100}
-                    height={100}
+                    fill
                     alt={item.title}
-                    className="w-full h-full"
+                    className="object-cover"
                   />
                 </div>
               </div>

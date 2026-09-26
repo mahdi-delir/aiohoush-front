@@ -6,15 +6,23 @@ import { useEffect, useRef, useState, type VideoHTMLAttributes } from "react";
 import { cn, downloadFile } from "@/lib/utils";
 import Button from "./button";
 import { VideoItem } from "@/types/video";
+import FileUpload from "./file-upload";
+import { UploadTarget } from "@/lib/upload-files";
 
 interface VideoPlayerProps extends Omit<
   VideoHTMLAttributes<HTMLVideoElement>,
   "item"
 > {
   item: VideoItem;
+  homeworkUpload?: UploadTarget;
 }
 
-export function Video({ item, className, ...videoProps }: VideoPlayerProps) {
+export function Video({
+  item,
+  className,
+  homeworkUpload,
+  ...videoProps
+}: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasError, setHasError] = useState(false);
 
@@ -68,7 +76,19 @@ export function Video({ item, className, ...videoProps }: VideoPlayerProps) {
         className={cn("aspect-video w-full", className)}
         {...videoProps}
       />
-      <div className="flex justify-end">
+      <div className="flex justify-between">
+        {item?.has_homework && (
+          <div className="m-4">
+            <FileUpload
+              key={`${item.id}:${item.playerUrl ?? ""}`}
+              target={homeworkUpload}
+              label="ارسال تمرین"
+            />
+          </div>
+          // <Button variant="secondary" size="sm" className="w-fit m-4">
+          //   ارسال تمرین
+          // </Button>
+        )}
         {item?.has_source_code && (
           <Button
             variant="secondary"
@@ -77,11 +97,6 @@ export function Video({ item, className, ...videoProps }: VideoPlayerProps) {
             onClick={() => downloadFile(item.source_code_url ?? "")}
           >
             دریافت سورس کد
-          </Button>
-        )}
-        {item?.has_homework && (
-          <Button variant="secondary" size="sm" className="w-fit m-4">
-            ارسال تمرین
           </Button>
         )}
       </div>
