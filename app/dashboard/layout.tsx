@@ -1,3 +1,4 @@
+import ClarityProvider from "@/components/clarity-provider";
 import DashboardHeader from "../../components/dash/header";
 
 export default function DashboardLayout({
@@ -120,9 +121,10 @@ export default function DashboardLayout({
   `,
       }}
     >
-      
+      <ClarityProvider />
+
       <DashboardHeader />
-      
+
       <div className="px-2">{children}</div>
     </main>
   );
