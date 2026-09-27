@@ -63,13 +63,13 @@ export default function Hero() {
         </div>
       ) : me?.data?.user_data?.watched_gift ? (
         <div className="">
-          <h2>اینجا قراره پری عکس بده</h2>
+          <h2>اینجا عکس قرار میگیره</h2>
           <p>عکس برای کسانی که هدیه رو دیدن ولی دوره ای نخریدن</p>
         </div>
       ) : (
         <div className="bg-linear-to-t from-primary-green to-transparent min-h-44 p-4">
           <h2 className="font-bold text-primary-green text-2xl">
-            اینجا قراره عکس بده پری
+            اینجا عکس قرار میگیره
           </h2>
           <p>عکس برای کسانی که هدیه رو ندیدن پس باید کاری کنیم برن ببینن</p>
         </div>
