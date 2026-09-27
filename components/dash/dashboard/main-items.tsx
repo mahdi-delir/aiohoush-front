@@ -48,7 +48,7 @@ const menuItems = [
   },
   {
     title: "کیف پول",
-    href: "/my-wallet",
+    href: "/wallet",
     icon: Wallet,
     permission: PERMISSIONS.WALLET_VIEW,
     order: 5,
@@ -102,7 +102,10 @@ export default function MainItems() {
             className="flex flex-col items-center justify-center aspect-square"
             key={item.href}
           >
-            <Link href={`dashboard${item.href}/`} className="flex flex-col items-center">
+            <Link
+              href={`/dashboard${item.href}/`}
+              className="flex flex-col items-center"
+            >
               <LiquidBg className="p-4 w-fit">
                 <Image
                   src={item.icon}
@@ -112,9 +115,7 @@ export default function MainItems() {
                 />
               </LiquidBg>
 
-              <span className="text-nowrap text-text-muted">
-                {item.title}
-              </span>
+              <span className="text-nowrap text-text-muted">{item.title}</span>
             </Link>
           </div>
         );

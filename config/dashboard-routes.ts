@@ -7,7 +7,10 @@ export const dashboardRoutes = {
     },
     courses: {
         title: 'دوره های آموزشی'
-    }
+    },
+    wallet: {
+        title: "کیف پول",
+    },
 } as const;
 
 export type DashboardRoute = keyof typeof dashboardRoutes;
