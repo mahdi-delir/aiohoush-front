@@ -1,4 +1,10 @@
 export const dashboardRoutes = {
+    "my-mentor": {
+        title: "منتور من",
+    },
+    wallet: {
+        title: "کیف پول",
+    },
     home : {
         title : "آیوهوش"
     },
@@ -7,10 +13,7 @@ export const dashboardRoutes = {
     },
     courses: {
         title: 'دوره های آموزشی'
-    },
-    wallet: {
-        title: "کیف پول",
-    },
+    }
 } as const;
 
 export type DashboardRoute = keyof typeof dashboardRoutes;
