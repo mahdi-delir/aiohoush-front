@@ -1,4 +1,7 @@
 export const dashboardRoutes = {
+    "best-seller": {
+        title: "بهترین منتورها",
+    },
     "my-mentor": {
         title: "منتور من",
     },
