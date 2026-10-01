@@ -4,7 +4,7 @@ import type { VideoItem } from "@/types/video";
 export const mockGiftVideo: ApiResponse<VideoItem> = {
   success: true,
   message: "دریافت اطلاعات با موفقیت انجام شد.",
-  detaile: "این پیام اگر api موفق نبود می آید",
+  detail: "این پیام اگر api موفق نبود می آید",
   called_by: "webapp",
   data: {
     id: 1,

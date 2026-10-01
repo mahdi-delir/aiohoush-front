@@ -6,7 +6,7 @@ export const mockMe: ApiResponse<MeResponse> = {
 
   message: "دریافت اطلاعات از سرور با موفقیت انجام شد",
 
-  detaile:
+  detail:
     "این پیام در حالت هایی خواهد آمد که ارور داده و ارور دارای توضیحات است.",
 
   called_by: "webapp",
