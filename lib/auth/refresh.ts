@@ -1,16 +1,17 @@
 import 'server-only'
 
-import {
-  createHash,
-  randomUUID,
-} from 'node:crypto'
+import { randomUUID } from 'node:crypto'
 
 import { getRedis } from '@/lib/redis'
+
+import type { TokenPair } from './refresh-cache'
+
 import {
-  decryptTokenPair,
-  encryptTokenPair,
-  type TokenPair,
-} from './refresh-cache'
+  deleteBffSession,
+  getSessionLockKey,
+  loadBffSession,
+  saveBffSession,
+} from './session-store'
 
 
 interface ApiResponse<T> {
@@ -30,11 +31,15 @@ end
 `
 
 
-function getNumberEnv(name: string): number {
+function getNumberEnv(
+  name: string,
+): number {
   const raw = process.env[name]
 
   if (!raw) {
-    throw new Error(`${name} is not configured`)
+    throw new Error(
+      `${name} is not configured`,
+    )
   }
 
   const value = Number(raw)
@@ -43,23 +48,18 @@ function getNumberEnv(name: string): number {
     !Number.isFinite(value) ||
     value <= 0
   ) {
-    throw new Error(`${name} must be positive`)
+    throw new Error(
+      `${name} must be positive`,
+    )
   }
 
   return value
 }
 
 
-function fingerprintRefreshToken(
-  refresh: string,
-): string {
-  return createHash('sha256')
-    .update(refresh)
-    .digest('hex')
-}
-
-
-function sleep(ms: number): Promise<void> {
+function sleep(
+  ms: number,
+): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms)
   })
@@ -86,8 +86,17 @@ async function requestRefresh(
     },
   )
 
-  const body =
-    await response.json() as ApiResponse<TokenPair>
+  let body: ApiResponse<TokenPair>
+
+  try {
+    body =
+      await response.json() as
+        ApiResponse<TokenPair>
+  } catch {
+    throw new Error(
+      'Invalid refresh response',
+    )
+  }
 
   if (
     !response.ok ||
@@ -104,7 +113,8 @@ async function requestRefresh(
 }
 
 
-export class RefreshRejectedError extends Error {
+export class RefreshRejectedError
+  extends Error {
   constructor(
     public readonly status: number,
   ) {
@@ -113,26 +123,27 @@ export class RefreshRejectedError extends Error {
 }
 
 
-export async function refreshTokensSingleFlight(
-  refresh: string,
+export class AuthSessionMissingError
+  extends Error {
+  constructor() {
+    super('BFF auth session not found')
+  }
+}
+
+
+export async function
+refreshSessionSingleFlight(
+  sessionId: string,
+  observedAccess: string,
 ): Promise<TokenPair> {
+
   const redis = await getRedis()
 
-  const fingerprint =
-    fingerprintRefreshToken(refresh)
-
   const lockKey =
-    `auth:refresh:lock:${fingerprint}`
-
-  const resultKey =
-    `auth:refresh:result:${fingerprint}`
+    getSessionLockKey(sessionId)
 
   const lockTtl = getNumberEnv(
     'AUTH_REFRESH_LOCK_TTL_MS',
-  )
-
-  const resultTtl = getNumberEnv(
-    'AUTH_REFRESH_RESULT_TTL_MS',
   )
 
   const waitTimeout = getNumberEnv(
@@ -147,11 +158,24 @@ export async function refreshTokensSingleFlight(
     Date.now() + waitTimeout
 
   while (Date.now() < deadline) {
-    const cached =
-      await redis.get(resultKey)
 
-    if (cached) {
-      return decryptTokenPair(cached)
+    const current =
+      await loadBffSession(sessionId)
+
+    if (!current) {
+      throw new AuthSessionMissingError()
+    }
+
+    /*
+     * اگر access عوض شده، یعنی request دیگری
+     * قبلاً refresh را انجام داده.
+     *
+     * پس همان جدیدترین pair را استفاده می‌کنیم.
+     */
+    if (
+      current.access !== observedAccess
+    ) {
+      return current
     }
 
     const owner = randomUUID()
@@ -165,54 +189,90 @@ export async function refreshTokensSingleFlight(
       },
     )
 
-    if (acquired === 'OK') {
+    if (acquired !== 'OK') {
+      await sleep(pollInterval)
+      continue
+    }
+
+    try {
+      /*
+       * بعد از گرفتن lock دوباره Redis را می‌خوانیم.
+       * ممکن است بین دو مرحله request دیگری refresh
+       * را کامل کرده باشد.
+       */
+      const lockedCurrent =
+        await loadBffSession(sessionId)
+
+      if (!lockedCurrent) {
+        throw new AuthSessionMissingError()
+      }
+
+      if (
+        lockedCurrent.access !==
+        observedAccess
+      ) {
+        return lockedCurrent
+      }
+
       try {
-        /*
-         * بعد از گرفتن lock دوباره check می‌کنیم؛
-         * ممکن است درست قبل از lock نتیجه ساخته شده باشد.
-         */
-        const existing =
-          await redis.get(resultKey)
-
-        if (existing) {
-          return decryptTokenPair(existing)
-        }
-
         const tokens =
-          await requestRefresh(refresh)
+          await requestRefresh(
+            lockedCurrent.refresh,
+          )
 
-        await redis.set(
-          resultKey,
-          encryptTokenPair(tokens),
-          {
-            PX: resultTtl,
-          },
+        await saveBffSession(
+          sessionId,
+          tokens,
         )
 
         return tokens
 
-      } finally {
-        /*
-         * DEL ساده خطرناک است:
-         * ممکن است TTL تمام شده باشد و process دیگری
-         * lock جدید گرفته باشد.
-         *
-         * فقط owner خودش اجازه حذف دارد.
-         */
-        await redis.eval(
-          RELEASE_LOCK_SCRIPT,
-          {
-            keys: [lockKey],
-            arguments: [owner],
-          },
-        )
-      }
-    }
+      } catch (error) {
+        if (
+          error instanceof
+            RefreshRejectedError &&
+          error.status >= 400 &&
+          error.status < 500
+        ) {
+          /*
+           * اگر lock TTL تمام شده باشد ممکن است
+           * worker دیگری meanwhile refresh موفق
+           * کرده باشد. قبل از حذف session دوباره
+           * وضعیت را بررسی می‌کنیم.
+           */
+          const latest =
+            await loadBffSession(
+              sessionId,
+            )
 
-    await sleep(pollInterval)
+          if (
+            latest &&
+            latest.access !==
+              observedAccess
+          ) {
+            return latest
+          }
+
+          await deleteBffSession(
+            sessionId,
+          )
+        }
+
+        throw error
+      }
+
+    } finally {
+      await redis.eval(
+        RELEASE_LOCK_SCRIPT,
+        {
+          keys: [lockKey],
+          arguments: [owner],
+        },
+      )
+    }
   }
 
   throw new Error(
-    'Timed out waiting for token refresh'
+    'Timed out waiting for token refresh',
   )
 }

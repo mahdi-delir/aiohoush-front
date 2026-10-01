@@ -2,86 +2,45 @@ import 'server-only'
 
 import { cookies } from 'next/headers'
 
-import type { TokenPair } from './refresh-cache'
+
+export const SESSION_COOKIE =
+  '__Host-session'
 
 
-export const ACCESS_COOKIE =
-  '__Host-access_token'
-
-export const REFRESH_COOKIE =
-  '__Host-refresh_token'
-
-
-function getJwtExpiration(
-  token: string,
-): Date {
-  const parts = token.split('.')
-
-  if (parts.length !== 3) {
-    throw new Error('Invalid JWT')
-  }
-
-  const payload = JSON.parse(
-    Buffer
-      .from(parts[1], 'base64url')
-      .toString('utf8')
-  ) as {
-    exp?: number
-  }
-
-  if (
-    typeof payload.exp !== 'number'
-  ) {
-    throw new Error(
-      'JWT does not contain exp claim'
-    )
-  }
-
-  return new Date(
-    payload.exp * 1000
-  )
-}
-
-
-export async function setAuthCookies(
-  tokens: TokenPair,
+export async function setSessionCookie(
+  sessionId: string,
+  expiresAt: Date,
 ): Promise<void> {
   const store = await cookies()
 
   store.set(
-    ACCESS_COOKIE,
-    tokens.access,
+    SESSION_COOKIE,
+    sessionId,
     {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
       path: '/',
-      expires: getJwtExpiration(
-        tokens.access,
-      ),
-    },
-  )
-
-  store.set(
-    REFRESH_COOKIE,
-    tokens.refresh,
-    {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-      path: '/',
-      expires: getJwtExpiration(
-        tokens.refresh,
-      ),
+      expires: expiresAt,
     },
   )
 }
 
 
-export async function clearAuthCookies():
+export async function getSessionId():
+  Promise<string | null> {
+  const store = await cookies()
+
+  return (
+    store.get(SESSION_COOKIE)?.value ??
+    null
+  )
+}
+
+
+export async function clearSessionCookie():
   Promise<void> {
   const store = await cookies()
 
-  store.delete(ACCESS_COOKIE)
-  store.delete(REFRESH_COOKIE)
+  store.delete(SESSION_COOKIE)
 }

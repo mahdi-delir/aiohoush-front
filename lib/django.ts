@@ -1,18 +1,16 @@
 import 'server-only'
 
-import { cookies } from 'next/headers'
+import { getSessionId } from '@/lib/auth/cookies'
 
 import {
-  ACCESS_COOKIE,
-  REFRESH_COOKIE,
-  clearAuthCookies,
-  setAuthCookies,
-} from '@/lib/auth/cookies'
-
-import {
+  AuthSessionMissingError,
   RefreshRejectedError,
-  refreshTokensSingleFlight,
+  refreshSessionSingleFlight,
 } from '@/lib/auth/refresh'
+
+import {
+  loadBffSession,
+} from '@/lib/auth/session-store'
 
 
 interface DjangoFetchOptions
@@ -22,7 +20,8 @@ interface DjangoFetchOptions
 
 
 function buildHeaders(
-  initialHeaders: HeadersInit | undefined,
+  initialHeaders:
+    HeadersInit | undefined,
   access: string | undefined,
 ): Headers {
   const headers = new Headers(
@@ -42,17 +41,22 @@ function buildHeaders(
 
 export async function fetchDjango(
   path: string,
-  options: DjangoFetchOptions = {},
+  options:
+    DjangoFetchOptions = {},
 ): Promise<Response> {
+
   const {
     retryOn401 = true,
     ...fetchOptions
   } = options
 
-  const store = await cookies()
+  const sessionId =
+    await getSessionId()
 
-  const access =
-    store.get(ACCESS_COOKIE)?.value
+  const authSession =
+    sessionId
+      ? await loadBffSession(sessionId)
+      : null
 
   const firstResponse = await fetch(
     `${process.env.DJANGO_API_URL}${path}`,
@@ -61,7 +65,7 @@ export async function fetchDjango(
 
       headers: buildHeaders(
         fetchOptions.headers,
-        access,
+        authSession?.access,
       ),
 
       cache: 'no-store',
@@ -70,25 +74,19 @@ export async function fetchDjango(
 
   if (
     firstResponse.status !== 401 ||
-    !retryOn401
+    !retryOn401 ||
+    !sessionId ||
+    !authSession
   ) {
-    return firstResponse
-  }
-
-  const refresh =
-    store.get(REFRESH_COOKIE)?.value
-
-  if (!refresh) {
     return firstResponse
   }
 
   try {
     const tokens =
-      await refreshTokensSingleFlight(
-        refresh,
+      await refreshSessionSingleFlight(
+        sessionId,
+        authSession.access,
       )
-
-    await setAuthCookies(tokens)
 
     return await fetch(
       `${process.env.DJANGO_API_URL}${path}`,
@@ -105,19 +103,20 @@ export async function fetchDjango(
     )
 
   } catch (error) {
-    /*
-     * اگر خود Django refresh را رد کرده باشد،
-     * session دیگر usable نیست.
-     *
-     * خطای Redis/network را با invalid token
-     * یکی نمی‌کنیم.
-     */
     if (
-      error instanceof RefreshRejectedError &&
-      error.status >= 400 &&
-      error.status < 500
+      error instanceof
+        RefreshRejectedError ||
+      error instanceof
+        AuthSessionMissingError
     ) {
-      await clearAuthCookies()
+      /*
+       * اینجا cookie را حذف نمی‌کنیم چون
+       * fetchDjango ممکن است جایی اجرا شود
+       * که mutation cookie مجاز نیست.
+       *
+       * Redis session یا حذف شده یا معتبر نیست.
+       */
+      return firstResponse
     }
 
     throw error
