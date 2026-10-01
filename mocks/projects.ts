@@ -1,4 +1,4 @@
-import { ApiResponse } from "@/types/global";
+import { ApiResponse } from "@/types/api";
 import type { ProjectGalleryData } from "@/types/project";
 
 export const mockProjects: ApiResponse<ProjectGalleryData> = {

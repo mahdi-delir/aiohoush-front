@@ -48,10 +48,10 @@ export default function CourseContent({ slug }: CourseContentProps) {
   }
 
   const course = res.data;
-  const episodes = course.seasons.flatMap((season) => season.episods);
+  const episodes = course?.seasons.flatMap((season) => season.episods);
 
   const selectedEpisode =
-    episodes.find((episode) => episode.id === selectedEpisodeId) ?? episodes[0];
+    episodes?.find((episode) => episode.id === selectedEpisodeId);
 
   return (
     <div className="flex flex-col gap-8">
@@ -59,7 +59,7 @@ export default function CourseContent({ slug }: CourseContentProps) {
         {selectedEpisode ? (
           <Video
             key={selectedEpisode.id}
-            item={activeTab === "aboutCourse" ? episodes[0] : selectedEpisode}
+            item={selectedEpisode}
             poster={selectedEpisode.cover}
           />
         ) : (
@@ -69,7 +69,7 @@ export default function CourseContent({ slug }: CourseContentProps) {
 
       <section>
         <span className="text-sm text-text-muted">
-          {course.course.duration} | {course.course.episod_count} جلسه
+          {course?.course.duration} | {course?.course.episod_count} جلسه
         </span>
       </section>
 
@@ -119,7 +119,7 @@ export default function CourseContent({ slug }: CourseContentProps) {
         tabIndex={0}
       >
         <ul className="flex flex-col gap-4">
-          {course.seasons.map((season, i) => {
+          {course?.seasons.map((season, i) => {
             const isOpen = !!openSeasons[i];
 
             return (
@@ -201,7 +201,7 @@ export default function CourseContent({ slug }: CourseContentProps) {
         hidden={activeTab !== "aboutCourse"}
         tabIndex={0}
       >
-        <p className="text-justify">{course.course.description}</p>
+        <p className="text-justify">{course?.course.description}</p>
       </section>
       <section
         id={`${tabId}-panel-homework`}
@@ -211,7 +211,7 @@ export default function CourseContent({ slug }: CourseContentProps) {
         tabIndex={0}
       >
         {activeTab === "homework" && (
-          <CourseHomework key={course.course.id} courseId={course.course.id} />
+          <CourseHomework key={course?.course.id} courseId={course?.course.id ?? 1} />
         )}
       </section>
     </div>

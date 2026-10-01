@@ -1,5 +1,5 @@
 import { CategoryResponse } from "@/types/category";
-import { ApiResponse } from "@/types/global";
+import { ApiResponse } from "@/types/api";
 
 export const mockCourseCat: ApiResponse<CategoryResponse> = {
   success: true,

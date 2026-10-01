@@ -1,4 +1,4 @@
-import { ApiResponse } from "@/types/global";
+import { ApiResponse } from "@/types/api";
 import type { HomeworkSubmission } from "@/types/homework";
 
 export const mockHomework: ApiResponse<HomeworkSubmission[]> = {

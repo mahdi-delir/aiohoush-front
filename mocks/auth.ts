@@ -1,5 +1,5 @@
 import type { MeResponse } from "@/types/auth";
-import { ApiResponse } from "@/types/global";
+import { ApiResponse } from "@/types/api";
 
 export const mockMe: ApiResponse<MeResponse> = {
   success: true,

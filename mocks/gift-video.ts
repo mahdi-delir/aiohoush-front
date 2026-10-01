@@ -1,4 +1,4 @@
-import { ApiResponse } from "@/types/global";
+import { ApiResponse } from "@/types/api";
 import type { VideoItem } from "@/types/video";
 
 export const mockGiftVideo: ApiResponse<VideoItem> = {

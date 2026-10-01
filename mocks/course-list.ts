@@ -1,5 +1,5 @@
 import { CategoriedCourse } from "@/types/course";
-import { ApiResponse } from "@/types/global";
+import { ApiResponse } from "@/types/api";
 
 export const mockCourseList: ApiResponse<CategoriedCourse> = {
   success: true,

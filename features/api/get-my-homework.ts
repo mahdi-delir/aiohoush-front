@@ -1,5 +1,5 @@
 import { mockHomework } from "@/mocks/homework";
-import { ApiResponse } from "@/types/global";
+import { ApiResponse } from "@/types/api";
 import {  HomeworkSubmission } from "@/types/homework";
 
 // Replace this adapter after the authenticated Django API contract is agreed.

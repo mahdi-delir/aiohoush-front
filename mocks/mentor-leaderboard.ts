@@ -1,4 +1,4 @@
-import { ApiResponse } from "@/types/global";
+import { ApiResponse } from "@/types/api";
 import type { MentorLeaderboard } from "@/types/mentor-leaderboard";
 
 // All identities, ratings and rankings below are fictional UI fixtures.
