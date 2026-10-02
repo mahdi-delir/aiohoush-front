@@ -1,6 +1,13 @@
 import { LoginOtpForm } from "@/features/auth/components/login-otp-form";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth/current-user";
+export default async function LoginPage() {
+  const currentUser = await getCurrentUser();
 
-export default function LoginPage() {
+  if (currentUser) {
+    redirect("/dashboard");
+  }
+
   return (
     <main className="flex min-h-screen w-full items-center justify-center px-4">
       <section className="w-full max-w-md rounded-2xl border p-6">

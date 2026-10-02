@@ -1,9 +1,22 @@
+import { redirect } from 'next/navigation'
+
 import ClarityProvider from "@/components/clarity-provider";
 import DashboardHeader from "../../components/dash/header";
 
-export default function DashboardLayout({
+import {
+  getCurrentUser,
+} from '@/lib/auth/current-user'
+
+export default async function DashboardLayout({
   children,
 }: LayoutProps<"/dashboard">) {
+  const currentUser =
+    await getCurrentUser()
+
+  if (!currentUser) {
+    redirect('/login')
+  }
+
   return (
     <main
       className="min-h-dvh w-full max-w-2xl p-2 flex flex-col gap-4"

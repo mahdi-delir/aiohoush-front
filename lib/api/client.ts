@@ -64,22 +64,26 @@ export async function apiFetch<T>(
     // response غیر JSON
   }
 
-  if (!response.ok) {
-    throw new ApiClientError(
-      body?.message ??
-        'خطایی در ارتباط با سرور رخ داد.',
-      response.status,
-      body,
-    )
-  }
-
   if (!body) {
-    throw new ApiClientError(
+  throw new ApiClientError(
       'پاسخ سرور معتبر نیست.',
       response.status,
       null,
     )
   }
+
+if (
+    !response.ok ||
+    body.success === false
+  ) {
+    throw new ApiClientError(
+      body.message ||
+        'خطایی در انجام درخواست رخ داد.',
+      response.status,
+      body,
+    )
+  }
+
 
   return body
 }

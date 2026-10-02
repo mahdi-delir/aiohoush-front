@@ -22,6 +22,8 @@ export function assertTrustedOrigin(
 
   const origin =
     request.headers.get('origin')
+  console.log('Actual Origin:', origin)
+  console.log('Expected Origin:', expectedOrigin)
 
   if (origin !== expectedOrigin) {
     throw new InvalidOriginError()

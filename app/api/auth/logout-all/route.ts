@@ -58,7 +58,7 @@ export async function POST(
      * فقط وقتی backend واقعاً logout-all
      * را انجام داد state محلی را حذف می‌کنیم.
      */
-    if (response.ok) {
+    if (response) {
       await deleteBffSession(
         sessionId,
       )

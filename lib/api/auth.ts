@@ -1,7 +1,9 @@
 import {
   apiFetch,
 } from './client'
-
+import type {
+  MeResponse,
+} from '@/types/auth'
 
 export interface ActiveSession {
   id: string
@@ -97,6 +99,15 @@ export async function revokeSession(
     }/revoke/`,
     {
       method: 'POST',
+    },
+  )
+}
+
+export async function getMe() {
+  return apiFetch<MeResponse>(
+    '/api/auth/me/',
+    {
+      method: 'GET',
     },
   )
 }
