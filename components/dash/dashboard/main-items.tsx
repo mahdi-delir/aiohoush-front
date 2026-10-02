@@ -1,6 +1,5 @@
 "use client";
 
-import { useMe } from "@/features/hooks/use-me";
 import { can } from "@/features/permissions/can";
 import { PERMISSIONS } from "@/features/permissions/permissions";
 
@@ -16,6 +15,7 @@ import Image from "next/image";
 import MainItemsSkeleton from "../skeleton/main-items";
 import LiquidBg from "../../ui/liquid-bg";
 import Link from "next/link";
+import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 
 const menuItems = [
   {
@@ -77,7 +77,7 @@ const menuItems = [
 ];
 
 export default function MainItems() {
-  const { data: me, isPending, isError } = useMe();
+  const { data: me, isPending, isError } = useCurrentUser();
 
   if (isPending) {
     return <MainItemsSkeleton />;
@@ -91,7 +91,7 @@ export default function MainItems() {
     if (!item.permission) {
       return true;
     }
-    return can(me.data.permissions, item.permission);
+    return can(me.permissions, item.permission);
   });
 
   return (

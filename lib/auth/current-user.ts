@@ -30,15 +30,20 @@ export async function getCurrentUser():
   let response: Response
 
   try {
-    response = await fetchDjango(
-      '/auth/me/',
-      {
+  response = await fetchDjango(
+        '/auth/me/',
+        {
         method: 'GET',
-      },
+        },
     )
-  } catch {
-    throw new CurrentUserServiceError()
-  }
+    } catch (error) {
+    console.error(
+        'getCurrentUser -> fetchDjango failed:',
+        error,
+    )
+
+    throw error
+    }
 
   /*
    * Authentication / authorization failure.
