@@ -1,27 +1,36 @@
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
 
 import ClarityProvider from "@/components/clarity-provider";
 import DashboardHeader from "../../components/dash/header";
 
+import { getCurrentUser } from "@/lib/auth/current-user";
 import {
-  getCurrentUser,
-} from '@/lib/auth/current-user'
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from "@tanstack/react-query";
+
+import { currentUserQueryKey } from "@/features/auth/queries/current-user";
 
 export default async function DashboardLayout({
   children,
 }: LayoutProps<"/dashboard">) {
-  const currentUser =
-    await getCurrentUser()
+  const currentUser = await getCurrentUser();
 
   if (!currentUser) {
-    redirect('/login')
+    redirect("/login");
   }
 
+  const queryClient = new QueryClient();
+
+  queryClient.setQueryData(currentUserQueryKey, currentUser);
+
   return (
-    <main
-      className="min-h-dvh w-full max-w-2xl p-2 flex flex-col gap-4"
-      style={{
-        background: `
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <main
+        className="min-h-dvh w-full max-w-2xl p-2 flex flex-col gap-4"
+        style={{
+          background: `
     radial-gradient(
       1020px 720px at 0% 0%,
       rgba(7, 105, 154, 0.3200) 0.00%,
@@ -132,13 +141,14 @@ export default async function DashboardLayout({
 
     #000
   `,
-      }}
-    >
-      <ClarityProvider />
+        }}
+      >
+        <ClarityProvider />
 
-      <DashboardHeader />
+        <DashboardHeader />
 
-      <div className="px-2">{children}</div>
-    </main>
+        <div className="px-2">{children}</div>
+      </main>
+    </HydrationBoundary>
   );
 }
