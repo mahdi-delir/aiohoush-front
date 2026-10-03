@@ -8,6 +8,13 @@ export const metadata: Metadata = {
 };
 
 export default async function MyMentorPage() {
-  const res = await getMyMentor();
-  return <MentorOverview data={res.data} />;
+  const response = await getMyMentor();
+
+  if (!response.data) {
+    throw new Error(
+      response.message || "دریافت اطلاعات منتور با خطا مواجه شد."
+    );
+  }
+
+  return <MentorOverview data={response.data} />;
 }
