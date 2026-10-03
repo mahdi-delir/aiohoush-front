@@ -8,6 +8,7 @@ export class InvalidOriginError extends Error {
 }
 
 
+
 export function assertTrustedOrigin(
   request: Request,
 ): void {
@@ -26,13 +27,33 @@ export function assertTrustedOrigin(
     .map((origin) => origin.trim())
     .filter(Boolean);
 
-  const actualOrigin =
+  const origin =
     request.headers.get("origin");
 
   if (
-    !actualOrigin ||
-    !allowedOrigins.includes(actualOrigin)
+    origin &&
+    allowedOrigins.includes(origin)
   ) {
-    throw new InvalidOriginError();
+    return;
   }
+
+  const referer =
+    request.headers.get("referer");
+
+  if (referer) {
+    try {
+      const refererOrigin =
+        new URL(referer).origin;
+
+      if (
+        allowedOrigins.includes(refererOrigin)
+      ) {
+        return;
+      }
+    } catch {
+      // Invalid Referer
+    }
+  }
+
+  throw new InvalidOriginError();
 }
