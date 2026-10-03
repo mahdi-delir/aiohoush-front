@@ -1,9 +1,9 @@
-import 'server-only'
+import "server-only";
 
 
 export class InvalidOriginError extends Error {
   constructor() {
-    super('Invalid request origin')
+    super("Invalid request origin");
   }
 }
 
@@ -11,21 +11,28 @@ export class InvalidOriginError extends Error {
 export function assertTrustedOrigin(
   request: Request,
 ): void {
-  const expectedOrigin =
-    process.env.APP_ORIGIN
+  const configuredOrigins =
+    process.env.APP_ORIGINS ||
+    process.env.APP_ORIGIN;
 
-  if (!expectedOrigin) {
+  if (!configuredOrigins) {
     throw new Error(
-      'APP_ORIGIN is not configured',
-    )
+      "APP_ORIGINS is not configured",
+    );
   }
 
-  const origin =
-    request.headers.get('origin')
-  console.log('Actual Origin:', origin)
-  console.log('Expected Origin:', expectedOrigin)
+  const allowedOrigins = configuredOrigins
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 
-  if (origin !== expectedOrigin) {
-    throw new InvalidOriginError()
+  const actualOrigin =
+    request.headers.get("origin");
+
+  if (
+    !actualOrigin ||
+    !allowedOrigins.includes(actualOrigin)
+  ) {
+    throw new InvalidOriginError();
   }
 }
