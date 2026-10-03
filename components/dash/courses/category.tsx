@@ -9,22 +9,33 @@ import AI from "@/assets/puffy-icons/chatbot.svg";
 import Skills from "@/assets/puffy-icons/microphone.svg";
 import { Suspense } from "react";
 
-export const categoryIcon = {
-  school: All,
-  web: Web,
-  code: Programming,
-  chatbot: AI,
-  drawing: Skills,
-};
+const iconBySlug = {
+  web: 'web',
+  programming: 'code',
+  ai: 'chatbot',
+  skills: 'drawing',
+} as const
 
 export default function CourseCategoryFilter() {
   const { data: res, isPending, isError } = useCourseCategory();
+  const categories =
+  (res?.data?.categories ?? [])
+    .map((category) => ({
+      ...category,
+
+      icon:
+        iconBySlug[
+          category.slug as keyof
+            typeof iconBySlug
+        ] ?? 'school',
+    }))
 
   return (
     <Suspense fallback={null}>
+      
       <HorizentalFilter
-        categories={res?.data?.categories ?? []}
-        icons={categoryIcon}
+        categories={categories}
+        icons={iconBySlug}
         title="دسته‌بندی دوره‌ها"
       />
     </Suspense>

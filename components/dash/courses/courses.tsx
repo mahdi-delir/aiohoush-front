@@ -11,13 +11,13 @@ export default function CourseVideoList() {
   const { data: res, isPending, isError } = useCourseList(category);
   const { data: categories } = useCourseCategory();
 
-  if (!category) {
-    return null;
-  }
 
-  const allCategories = categories?.data.categories;
+  const allCategories = categories?.data?.categories;
   
-  const title = allCategories?.find((item) => item.slug === category)?.title ?? "دوره‌ها";
-
-  return <CourseList title={title} courses={res?.data.courses ?? []} />;
+const title =
+  allCategories?.find(
+    (item) =>
+      item.slug === category,
+  )?.title ?? 'همه دوره‌ها'
+  return <CourseList title={title} courses={res?.data?.courses ?? []} />;
 }

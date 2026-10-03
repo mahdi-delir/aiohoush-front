@@ -11,10 +11,10 @@ export type CategoryIcon =
   | "web";
   
 export interface CategoryItem {
-  id: number;
-  title: string;
-  en_title?: string;
-  icon: CategoryIcon;
+  id: number
+  title: string
+  en_title?: string
+  icon?: CategoryIcon
   slug: string
 }
 

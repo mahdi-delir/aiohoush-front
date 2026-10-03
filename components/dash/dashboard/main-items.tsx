@@ -1,8 +1,7 @@
 "use client";
 
 import { can } from "@/features/permissions/can";
-import { PERMISSIONS } from "@/features/permissions/permissions";
-
+import { PERMISSIONS } from "@/config/permissions"
 import Gift from "@/assets/puffy-icons/gift.svg";
 import Training from "@/assets/puffy-icons/training.svg";
 import ChatBot from "@/assets/puffy-icons/chatbot.svg";
@@ -22,56 +21,56 @@ const menuItems = [
     title: "هدیه",
     href: "/gift",
     icon: Gift,
-    permission: PERMISSIONS.GIFT_VIEW,
+    permission: PERMISSIONS.course.view,
     order: 1,
   },
   {
     title: "دوره ها",
     href: "/courses",
     icon: Training,
-    permission: PERMISSIONS.COURSE_VIEW,
+    permission: PERMISSIONS.course.view,
     order: 2,
   },
   {
     title: "هوش مصنوعی",
     href: "/ai",
     icon: ChatBot,
-    permission: PERMISSIONS.AI_VIEW,
+    permission: PERMISSIONS?.ai?.view,
     order: 4,
   },
   {
     title: "پروژه ها",
     href: "/projects",
     icon: Code,
-    permission: PERMISSIONS.PROJECT_VIEW,
+    permission: PERMISSIONS?.project?.view,
     order: 3,
   },
   {
     title: "کیف پول",
     href: "/wallet",
     icon: Wallet,
-    permission: PERMISSIONS.WALLET_VIEW,
+    permission: PERMISSIONS?.wallet?.view,
     order: 5,
   },
   {
     title: "راهنما",
     href: "/manual",
     icon: UserManual,
-    permission: PERMISSIONS.GUIDE_VIEW,
+    permission: PERMISSIONS?.guide?.view,
     order: 6,
   },
   {
     title: "منتور من",
     href: "/my-mentor",
     icon: Support,
-    permission: PERMISSIONS.MYMENTOR_VIEW,
+    permission: PERMISSIONS?.mentor?.view,
     order: 7,
   },
   {
     title: "برترین منتور ها",
     href: "/best-seller",
     icon: Apply,
-    permission: PERMISSIONS.BESTMENTOR_VIEW,
+    permission: PERMISSIONS?.rank?.view,
     order: 8,
   },
 ];

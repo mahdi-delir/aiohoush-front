@@ -1,7 +1,21 @@
-import { mockCourseCat } from "@/mocks/course-categories";
-import { CategoryResponse } from "@/types/category";
-import { ApiResponse } from "@/types/api";
+import {
+  apiFetch,
+} from '@/lib/api/client'
 
-export async function getCourseCat(): Promise<ApiResponse<CategoryResponse>> {
-    return mockCourseCat
+import type {
+  ApiResponse,
+} from '@/types/api'
+
+import type {
+  CategoryResponse,
+} from '@/types/category'
+
+
+export function getCourseCat():
+  Promise<
+    ApiResponse<CategoryResponse>
+  > {
+  return apiFetch<CategoryResponse>(
+    '/api/course-categories/',
+  )
 }
