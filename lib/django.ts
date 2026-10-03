@@ -1,62 +1,73 @@
-import 'server-only'
+import "server-only";
 
-import { getSessionId } from '@/lib/auth/cookies'
+import { headers as nextHeaders } from "next/headers";
+
+import { getSessionId } from "@/lib/auth/cookies";
 
 import {
   AuthSessionMissingError,
   RefreshRejectedError,
   refreshSessionSingleFlight,
-} from '@/lib/auth/refresh'
+} from "@/lib/auth/refresh";
 
 import {
   loadBffSession,
-} from '@/lib/auth/session-store'
+} from "@/lib/auth/session-store";
 
 
-interface DjangoFetchOptions
-  extends RequestInit {
-  retryOn401?: boolean
+interface DjangoFetchOptions extends RequestInit {
+  retryOn401?: boolean;
 }
 
 
 function buildHeaders(
-  initialHeaders:
-    HeadersInit | undefined,
+  initialHeaders: HeadersInit | undefined,
   access: string | undefined,
+  browserUserAgent: string | null,
 ): Headers {
-  const headers = new Headers(
-    initialHeaders,
-  )
+  const headers = new Headers(initialHeaders);
 
   if (access) {
     headers.set(
-      'Authorization',
+      "Authorization",
       `Bearer ${access}`,
-    )
+    );
   }
 
-  return headers
+  if (
+    browserUserAgent &&
+    !headers.has("User-Agent")
+  ) {
+    headers.set(
+      "User-Agent",
+      browserUserAgent,
+    );
+  }
+
+  return headers;
 }
 
 
 export async function fetchDjango(
   path: string,
-  options:
-    DjangoFetchOptions = {},
+  options: DjangoFetchOptions = {},
 ): Promise<Response> {
-
   const {
     retryOn401 = true,
     ...fetchOptions
-  } = options
+  } = options;
+
+  const incomingHeaders = await nextHeaders();
+  const browserUserAgent =
+    incomingHeaders.get("user-agent");
 
   const sessionId =
-    await getSessionId()
+    await getSessionId();
 
   const authSession =
     sessionId
       ? await loadBffSession(sessionId)
-      : null
+      : null;
 
   const firstResponse = await fetch(
     `${process.env.DJANGO_API_URL}${path}`,
@@ -66,11 +77,12 @@ export async function fetchDjango(
       headers: buildHeaders(
         fetchOptions.headers,
         authSession?.access,
+        browserUserAgent,
       ),
 
-      cache: 'no-store',
+      cache: "no-store",
     },
-  )
+  );
 
   if (
     firstResponse.status !== 401 ||
@@ -78,7 +90,7 @@ export async function fetchDjango(
     !sessionId ||
     !authSession
   ) {
-    return firstResponse
+    return firstResponse;
   }
 
   try {
@@ -86,7 +98,7 @@ export async function fetchDjango(
       await refreshSessionSingleFlight(
         sessionId,
         authSession.access,
-      )
+      );
 
     return await fetch(
       `${process.env.DJANGO_API_URL}${path}`,
@@ -96,29 +108,20 @@ export async function fetchDjango(
         headers: buildHeaders(
           fetchOptions.headers,
           tokens.access,
+          browserUserAgent,
         ),
 
-        cache: 'no-store',
+        cache: "no-store",
       },
-    )
-
+    );
   } catch (error) {
     if (
-      error instanceof
-        RefreshRejectedError ||
-      error instanceof
-        AuthSessionMissingError
+      error instanceof RefreshRejectedError ||
+      error instanceof AuthSessionMissingError
     ) {
-      /*
-       * اینجا cookie را حذف نمی‌کنیم چون
-       * fetchDjango ممکن است جایی اجرا شود
-       * که mutation cookie مجاز نیست.
-       *
-       * Redis session یا حذف شده یا معتبر نیست.
-       */
-      return firstResponse
+      return firstResponse;
     }
 
-    throw error
+    throw error;
   }
 }
