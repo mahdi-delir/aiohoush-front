@@ -1,6 +1,6 @@
 import 'server-only'
 
-
+import { headers as nextHeaders } from "next/headers";
 function getPositiveNumberEnv(name: string): number {
   const raw = process.env[name]
 
@@ -33,34 +33,45 @@ export async function postDjangoJson(
   path: string,
   body: unknown,
 ): Promise<Response> {
-  const controller = new AbortController()
+  const controller = new AbortController();
 
   const timeout = setTimeout(
     () => controller.abort(),
     getPositiveNumberEnv(
-      'DJANGO_REQUEST_TIMEOUT_MS',
+      "DJANGO_REQUEST_TIMEOUT_MS",
     ),
-  )
+  );
 
   try {
+    const incomingHeaders = await nextHeaders();
+    const browserUserAgent =
+      incomingHeaders.get("user-agent");
+
+    const requestHeaders: HeadersInit = {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    };
+
+    if (browserUserAgent) {
+      requestHeaders["User-Agent"] =
+        browserUserAgent;
+    }
+
     return await fetch(
       getDjangoUrl(path),
       {
-        method: 'POST',
+        method: "POST",
 
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
+        headers: requestHeaders,
 
         body: JSON.stringify(body),
 
-        cache: 'no-store',
+        cache: "no-store",
         signal: controller.signal,
       },
-    )
+    );
   } finally {
-    clearTimeout(timeout)
+    clearTimeout(timeout);
   }
 }
 
