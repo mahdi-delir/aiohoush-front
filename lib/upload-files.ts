@@ -25,30 +25,68 @@ export async function uploadFiles<T = unknown>({
   if (!url.trim() || !fileField.trim()) {
     throw new Error("آدرس آپلود و فایل برای آپلود الزامی است.");
   }
-  if (!files.length) throw new Error("فایلی برای آپلود انتخاب نشده است.");
-  if (files.some((file) => file.size > MAX_UPLOAD_FILE_BYTES)) {
-    throw new Error("حجم هر فایل نبایت بیشتر از 5 مگابایت باشد.");
+
+  if (!files.length) {
+    throw new Error("فایلی برای آپلود انتخاب نشده است.");
   }
-  if (fields && Object.prototype.hasOwnProperty.call(fields, fileField)) {
-    throw new Error("File field must not collide with metadata fields");
+
+  if (files.some((file) => file.size > MAX_UPLOAD_FILE_BYTES)) {
+    throw new Error("حجم هر فایل نباید بیشتر از ۵ مگابایت باشد.");
   }
 
   const body = new FormData();
+
   for (const [key, value] of Object.entries(fields ?? {})) {
     body.append(key, value);
   }
-  for (const file of files) body.append(fileField, file, file.name);
 
+  for (const file of files) {
+    body.append(fileField, file, file.name);
+  }
+
+  /*
+   * درخواست‌های داخلی باید از BFF عبور کنند
+   * تا Authorization توسط fetchDjango اضافه شود.
+   */
+  if (url.startsWith("/api/")) {
+    onProgress?.(0);
+
+    const response = await fetch(url, {
+      method: "POST",
+      body,
+      credentials: "same-origin",
+      signal,
+    });
+
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok || result?.success === false) {
+      throw new Error(
+        result?.message ||
+          "ارسال فایل توسط سرور رد شد.",
+      );
+    }
+
+    onProgress?.(100);
+
+    return result as T;
+  }
+
+  // آپلودهای قدیمی که URL مستقیم دارند
   const response = await api.post<T>(url, body, {
     adapter: "xhr",
     signal,
     onUploadProgress: ({ loaded, total }) => {
       onProgress?.(
         total && total > 0
-          ? Math.min(100, Math.max(), Math.floor((loaded / total) * 100))
+          ? Math.min(
+              100,
+              Math.floor((loaded / total) * 100),
+            )
           : null,
       );
     },
   });
+
   return response.data;
 }

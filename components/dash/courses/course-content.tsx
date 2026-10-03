@@ -61,7 +61,7 @@ export default function CourseContent({ slug }: CourseContentProps) {
           <Video
             key={selectedEpisode.id}
             item={selectedEpisode}
-            poster={selectedEpisode.cover}
+            poster={selectedEpisode.cover ?? ""}
             homeworkUpload={
               selectedEpisode.has_homework
                 ? {
@@ -179,15 +179,15 @@ export default function CourseContent({ slug }: CourseContentProps) {
                           >
                             {episod.order}
                           </span>
-                          <h4>{episod.short_desc}</h4>
+                          <h4>{episod.title || episod.description}</h4>
                         </div>
 
                         <div className="relative w-1/3 aspect-video rounded-icon overflow-hidden">
                           <Image
-                            src={episod.cover}
+                            src={episod.cover || "/icon.png"}
                             fill
                             alt={episod.title ?? ""}
-                            className="object-cover"
+                            className="object-contain"
                           />
 
                           <span className="absolute bottom-1 right-3 bg-black px-1 rounded-icon text-xs">

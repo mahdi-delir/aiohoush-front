@@ -1,7 +1,11 @@
-import { mockCourse } from "@/mocks/course";
-import { Course } from "@/types/course";
-import { ApiResponse } from "@/types/api";
+import { apiFetch } from "@/lib/api/client";
+import type { ApiResponse } from "@/types/api";
+import type { Course } from "@/types/course";
 
-export async function getCourse(slug:string):Promise<ApiResponse<Course>> {
-    return mockCourse    
+export async function getCourse(
+  slug: string,
+): Promise<ApiResponse<Course>> {
+  return apiFetch<Course>(
+    `/api/courses/${encodeURIComponent(slug)}`,
+  );
 }

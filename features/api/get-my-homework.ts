@@ -1,8 +1,15 @@
-import { mockHomework } from "@/mocks/homework";
-import { ApiResponse } from "@/types/api";
-import {  HomeworkSubmission } from "@/types/homework";
+import { apiFetch } from "@/lib/api/client";
+import type { ApiResponse } from "@/types/api";
+import type {
+  SessionHomeworkSubmission,
+} from "@/types/session-homework";
 
-// Replace this adapter after the authenticated Django API contract is agreed.
-export async function getMyHomework(courseId: number): Promise<ApiResponse<HomeworkSubmission[]>> {
-  return mockHomework
+export async function getMyHomework(
+  courseId: number,
+): Promise<
+  ApiResponse<SessionHomeworkSubmission[]>
+> {
+  return apiFetch<SessionHomeworkSubmission[]>(
+    `/api/homework/mine?course=${courseId}`,
+  );
 }

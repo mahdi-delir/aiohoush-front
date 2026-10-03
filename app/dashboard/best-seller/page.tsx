@@ -9,5 +9,13 @@ export const metadata: Metadata = {
 
 export default async function BestMentorsPage() {
   const res = await getMentorLeaderboard();
-  return <MentorLeaderboard data={res.data} />;
+  const data = res?.data ?? {
+    periodLabel: "",
+    comparisonLabel: "",
+    updatedAt: "",
+    rankingDescription: "",
+    mentors: [],
+  };
+
+  return <MentorLeaderboard data={data} />;
 }

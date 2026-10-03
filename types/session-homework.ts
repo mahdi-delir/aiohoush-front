@@ -1,4 +1,6 @@
-export type SessionHomeworkStatus = "submitted" | "reviewed";
+export type SessionHomeworkStatus =
+  | "submitted"
+  | "reviewed";
 
 export interface SessionHomeworkSubmission {
   id: number;
