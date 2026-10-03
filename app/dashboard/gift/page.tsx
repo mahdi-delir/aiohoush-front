@@ -1,21 +1,19 @@
-import GiftCategory from "@/components/dash/gift/category";
-import GiftVideo from "@/components/dash/gift/gift-video";
-import { Suspense } from "react";
+import GiftVideos from "@/components/dash/gift/gift-video";
 
 export default function GiftPage() {
   return (
     <div className="flex flex-col gap-4">
-      <section className="bg-card-bg rounded-square min-h-44 overflow-hidden">
-        <h2 className="p-4">اینجا عکس قرار میگیره</h2>
+      <section className="min-h-44 overflow-hidden rounded-square bg-card-bg">
+        <h2 className="p-4">هدیه‌های آموزشی آیوهوش</h2>
       </section>
-      <GiftCategory />
-      <Suspense fallback={null}>
-        <GiftVideo />
-      </Suspense>
+
+      <GiftVideos />
+
       <section className="mt-4">
-        <h2 className="mb-2">چند تا از خوبی های آموزش در آیوهوش</h2>
-        <div className="bg-card-bg rounded-square min-h-52 overflow-hidden">
-          <h2 className="p-4">اینجا عکس قرار میگیره</h2>
+        <h2 className="mb-2">چند تا از خوبی‌های آموزش در آیوهوش</h2>
+
+        <div className="min-h-52 overflow-hidden rounded-square bg-card-bg">
+          <h2 className="p-4">اینجا عکس قرار می‌گیرد</h2>
         </div>
       </section>
     </div>
