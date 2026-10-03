@@ -6,7 +6,7 @@ import Image from "next/image";
 import Left from "@/assets/puffy-icons/left.svg";
 import { useId, useRef, useState } from "react";
 import CourseHomework from "./course-homework";
-
+import SessionHomework from "./session-homework";
 const courseTabs = [
   { id: "episods", label: "جلسات دوره" },
   { id: "aboutCourse", label: "درباره دوره" },
@@ -50,8 +50,9 @@ export default function CourseContent({ slug }: CourseContentProps) {
   const course = res.data;
   const episodes = course?.seasons.flatMap((season) => season.episods);
 
-  const selectedEpisode =
-    episodes?.find((episode) => episode.id === selectedEpisodeId);
+  const selectedEpisode = episodes?.find(
+    (episode) => episode.id === selectedEpisodeId,
+  );
 
   return (
     <div className="flex flex-col gap-8">
@@ -61,6 +62,14 @@ export default function CourseContent({ slug }: CourseContentProps) {
             key={selectedEpisode.id}
             item={selectedEpisode}
             poster={selectedEpisode.cover}
+            homeworkUpload={
+              selectedEpisode.has_homework
+                ? {
+                    url: `/api/course-sessions/${selectedEpisode.id}/homework`,
+                    fileField: "attachment",
+                  }
+                : undefined
+            }
           />
         ) : (
           <p>هنوز جلسه‌ای برای این دوره ثبت نشده است.</p>
@@ -211,7 +220,10 @@ export default function CourseContent({ slug }: CourseContentProps) {
         tabIndex={0}
       >
         {activeTab === "homework" && (
-          <CourseHomework key={course?.course.id} courseId={course?.course.id ?? 1} />
+          <CourseHomework
+            key={course?.course.id}
+            courseId={course?.course.id ?? 1}
+          />
         )}
       </section>
     </div>

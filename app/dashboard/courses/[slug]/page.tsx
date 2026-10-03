@@ -49,8 +49,8 @@ export async function generateMetadata({
   const { course } = await prepareCourse(slug);
 
   return {
-    title: `${course.course.title} | آیوهوش`,
-    description: course.course.short_description,
+    title: `${course?.course.title} | آیوهوش`,
+    description: course?.course.short_description,
   };
 }
 

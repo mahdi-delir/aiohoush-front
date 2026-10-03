@@ -40,7 +40,9 @@ export default function FileUpload({
   const helpId = useId();
 
   async function handleChange(event: ChangeEvent<HTMLInputElement>) {
-    const selected = Array.from(event.currentTarget.files ?? []);
+    const selected = event.currentTarget.files?.[0]
+      ? [event.currentTarget.files[0]]
+      : [];
     event.currentTarget.value = "";
     if (!selected.length || requestRef.current) return;
     const rejected = selected.filter(
@@ -114,7 +116,6 @@ export default function FileUpload({
         type="file"
         name=""
         id=""
-        multiple
         hidden
         aria-label={label}
         ref={inputRef}
@@ -133,7 +134,6 @@ export default function FileUpload({
         >
           {busy ? "در حال ارسال…" : label}
         </Button>
-        
       </div>
       <p id={helpId} className="text-xs text-text-muted">
         همهٔ فرمت‌ها مجازند؛ حداکثر حجم هر فایل ۵ مگابایت است.
@@ -173,15 +173,10 @@ export default function FileUpload({
         </div>
       )}
       {busy && (
-          <Button
-            type="button"
-            variant="danger"
-            size="sm"
-            onClick={cancelUpload}
-          >
-            لغو ارسال
-          </Button>
-        )}
+        <Button type="button" variant="danger" size="sm" onClick={cancelUpload}>
+          لغو ارسال
+        </Button>
+      )}
       <p role="status" className="text-sm text-text-muted">
         {busy
           ? percent === 100
