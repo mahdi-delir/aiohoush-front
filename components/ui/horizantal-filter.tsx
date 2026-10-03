@@ -34,23 +34,32 @@ export function HorizentalFilter({
       <div className="flex gap-4 overflow-x-auto scrollbar-none">
         {categories.map((category) => {
           const isSelected = category.slug === selectedFilter;
+          const iconSrc = category.icon ? icons[category.icon] : undefined;
+
           return (
             <button
               type="button"
-              className="flex flex-col items-center  min-w-20"
+              className="flex flex-col items-center min-w-20"
               onClick={() => handleCategorySelect(category)}
               key={category.id}
             >
               <LiquidBg
-                className={`p-2 transition-all ${isSelected ? "bg-primary-green" : ""}`}
+                className={`p-2 transition-all ${
+                  isSelected ? "bg-primary-green" : ""
+                }`}
               >
-                <Image
-                  alt={category.title}
-                  src={icons[category.icon]}
-                  width={40}
-                  height={40}
-                />
+                {iconSrc ? (
+                  <Image
+                    alt={category.title}
+                    src={iconSrc}
+                    width={40}
+                    height={40}
+                  />
+                ) : (
+                  <span aria-hidden="true" className="block h-10 w-10" />
+                )}
               </LiquidBg>
+
               <span className="text-center text-xs mt-2">{category.title}</span>
             </button>
           );

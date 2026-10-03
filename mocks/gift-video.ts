@@ -9,7 +9,6 @@ export const mockGiftVideo: ApiResponse<VideoItem> = {
   data: {
     id: 1,
     title: "ورود به دنیای برنامه نویسی",
-    slug: "programming-start",
     playerUrl:
       "https://aiohoush.arvanvod.ir/y38N51NeG0/eA6adKolwk/h_,144_200,240_400,360_761,480_761,720_761,1080_761,k.mp4.list/master.m3u8",
     has_source_code: false,

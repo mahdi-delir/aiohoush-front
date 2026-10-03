@@ -43,7 +43,7 @@ export const mockCourse: ApiResponse<Course> = {
             has_homework: true,
             is_public: true,
             duration: "49 دقیقه",
-            wathced_percent: 100,
+            watched_percent: 100,
             cover:
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuW4Z_DKjJnacOk7Up3MXi7GR8e5h7wfeuuNHpxwrUw&s=10",
           },
@@ -59,7 +59,7 @@ export const mockCourse: ApiResponse<Course> = {
             has_homework: true,
             is_public: true,
             duration: "30 دقیقه",
-            wathced_percent: 80,
+            watched_percent: 80,
             cover:
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuW4Z_DKjJnacOk7Up3MXi7GR8e5h7wfeuuNHpxwrUw&s=10",
           },
@@ -76,7 +76,7 @@ export const mockCourse: ApiResponse<Course> = {
             has_homework: true,
             is_public: false,
             duration: "49 دقیقه",
-            wathced_percent: 100,
+            watched_percent: 100,
             cover:
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuW4Z_DKjJnacOk7Up3MXi7GR8e5h7wfeuuNHpxwrUw&s=10",
           },
@@ -101,7 +101,7 @@ export const mockCourse: ApiResponse<Course> = {
             has_homework: true,
             is_public: true,
             duration: "49 دقیقه",
-            wathced_percent: 100,
+            watched_percent: 100,
             cover:
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuW4Z_DKjJnacOk7Up3MXi7GR8e5h7wfeuuNHpxwrUw&s=10",
           },
@@ -117,7 +117,7 @@ export const mockCourse: ApiResponse<Course> = {
             has_homework: true,
             is_public: true,
             duration: "30 دقیقه",
-            wathced_percent: 80,
+            watched_percent: 80,
             cover:
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuW4Z_DKjJnacOk7Up3MXi7GR8e5h7wfeuuNHpxwrUw&s=10",
           },
@@ -134,7 +134,7 @@ export const mockCourse: ApiResponse<Course> = {
             has_homework: true,
             is_public: false,
             duration: "49 دقیقه",
-            wathced_percent: 100,
+            watched_percent: 100,
             cover:
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuW4Z_DKjJnacOk7Up3MXi7GR8e5h7wfeuuNHpxwrUw&s=10",
           },
@@ -159,7 +159,7 @@ export const mockCourse: ApiResponse<Course> = {
             has_homework: true,
             is_public: true,
             duration: "49 دقیقه",
-            wathced_percent: 100,
+            watched_percent: 100,
             cover:
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuW4Z_DKjJnacOk7Up3MXi7GR8e5h7wfeuuNHpxwrUw&s=10",
           },
@@ -175,7 +175,7 @@ export const mockCourse: ApiResponse<Course> = {
             has_homework: true,
             is_public: true,
             duration: "30 دقیقه",
-            wathced_percent: 80,
+            watched_percent: 80,
             cover:
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuW4Z_DKjJnacOk7Up3MXi7GR8e5h7wfeuuNHpxwrUw&s=10",
           },
@@ -192,7 +192,7 @@ export const mockCourse: ApiResponse<Course> = {
             has_homework: true,
             is_public: false,
             duration: "49 دقیقه",
-            wathced_percent: 100,
+            watched_percent: 100,
             cover:
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuW4Z_DKjJnacOk7Up3MXi7GR8e5h7wfeuuNHpxwrUw&s=10",
           },
@@ -217,7 +217,7 @@ export const mockCourse: ApiResponse<Course> = {
             has_homework: true,
             is_public: true,
             duration: "49 دقیقه",
-            wathced_percent: 100,
+            watched_percent: 100,
             cover:
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuW4Z_DKjJnacOk7Up3MXi7GR8e5h7wfeuuNHpxwrUw&s=10",
           },
@@ -233,7 +233,7 @@ export const mockCourse: ApiResponse<Course> = {
             has_homework: true,
             is_public: true,
             duration: "30 دقیقه",
-            wathced_percent: 80,
+            watched_percent: 80,
             cover:
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuW4Z_DKjJnacOk7Up3MXi7GR8e5h7wfeuuNHpxwrUw&s=10",
           },
@@ -250,7 +250,7 @@ export const mockCourse: ApiResponse<Course> = {
             has_homework: true,
             is_public: false,
             duration: "49 دقیقه",
-            wathced_percent: 100,
+            watched_percent: 100,
             cover:
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMuW4Z_DKjJnacOk7Up3MXi7GR8e5h7wfeuuNHpxwrUw&s=10",
           },
