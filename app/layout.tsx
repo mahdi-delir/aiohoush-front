@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import { QueryProvider } from "@/providers/query-provider";
-
+import InstallPrompt from "@/components/pwa/install-prompt";
 import { darbare } from "@/lib/utils";
 
 
@@ -19,7 +19,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${darbare.variable}  h-full antialiased`}
     >
       <body className="min-h-full flex flex-col items-center">
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>{children}
+
+          <InstallPrompt />
+        </QueryProvider>
       </body>
     </html>
   );

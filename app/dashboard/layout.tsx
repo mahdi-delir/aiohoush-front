@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import ClarityProvider from "@/components/clarity-provider";
 import DashboardHeader from "../../components/dash/header";
+import type { Metadata } from "next";
 
 import { getCurrentUser } from "@/lib/auth/current-user";
 import {
@@ -11,7 +12,17 @@ import {
 } from "@tanstack/react-query";
 
 import { currentUserQueryKey } from "@/features/auth/queries/current-user";
-
+export const metadata: Metadata = {
+  manifest: "/app.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "آیوهوش",
+    statusBarStyle: "black-translucent",
+  },
+  icons: {
+    apple: "/pwa-icon/180",
+  },
+};
 export default async function DashboardLayout({
   children,
 }: LayoutProps<"/dashboard">) {
