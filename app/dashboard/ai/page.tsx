@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const products = [
   {
@@ -41,12 +41,56 @@ const products = [
   },
 ] as const;
 
+type PaymentResult = "paid" | "failed" | "pending";
+
+const paymentMessages: Record<
+  PaymentResult,
+  { title: string; text: string; className: string }
+> = {
+  paid: {
+    title: "پرداخت با موفقیت انجام شد",
+    text: "سفارش شما ثبت شد و اطلاعات اکانت به‌زودی برایتان ارسال می‌شود.",
+    className: "border-primary-green/30 bg-approve-bg text-approve",
+  },
+  failed: {
+    title: "پرداخت ناموفق بود",
+    text: "اگر مبلغی از حساب شما کم شده، طی ۷۲ ساعت به حسابتان برمی‌گردد.",
+    className: "border-danger/30 bg-danger-bg text-danger",
+  },
+  pending: {
+    title: "وضعیت پرداخت هنوز مشخص نیست",
+    text: "اگر مبلغ از حساب شما کم شده، با پشتیبانی تماس بگیرید و شماره سفارش را اعلام کنید.",
+    className: "border-white/10 bg-element-bg text-white",
+  },
+};
+
+function isPaymentResult(value: string | null): value is PaymentResult {
+  return value === "paid" || value === "failed" || value === "pending";
+}
+
 function formatPrice(price: number) {
   return new Intl.NumberFormat("fa-IR").format(price);
 }
 
 export default function AIPage() {
   const [loadingProduct, setLoadingProduct] = useState<string | null>(null);
+  const [paymentResult, setPaymentResult] = useState<{
+    result: PaymentResult;
+    orderId: string | null;
+  } | null>(null);
+
+  // بک‌اند بعد از استعلام پرداخت، کاربر را با ?payment=...&order=...
+  // به این صفحه برمی‌گرداند. این پیام فقط نمایشی است؛ وضعیت واقعی
+  // سفارش در بک‌اند ثبت شده است.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const result = params.get("payment");
+
+    if (!isPaymentResult(result)) return;
+
+    setPaymentResult({ result, orderId: params.get("order") });
+    window.history.replaceState(null, "", window.location.pathname);
+  }, []);
 
   const handlePurchase = async (productCode: string) => {
     try {
@@ -85,6 +129,37 @@ export default function AIPage() {
 
   return (
     <div className="flex flex-col gap-6 pb-8">
+      {paymentResult && (
+        <section
+          role="status"
+          className={`rounded-square border px-5 py-4 ${paymentMessages[paymentResult.result].className}`}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="font-bold">
+                {paymentMessages[paymentResult.result].title}
+              </h2>
+              <p className="mt-2 text-sm leading-7 opacity-90">
+                {paymentMessages[paymentResult.result].text}
+              </p>
+              {paymentResult.orderId && (
+                <p className="mt-2 text-xs opacity-75" dir="ltr">
+                  {paymentResult.orderId}
+                </p>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => setPaymentResult(null)}
+              aria-label="بستن"
+              className="text-lg leading-none opacity-70 hover:opacity-100"
+            >
+              ×
+            </button>
+          </div>
+        </section>
+      )}
+
       <section className="relative isolate overflow-hidden rounded-square border border-primary-green/20 bg-card-bg px-5 py-8 sm:p-8">
         <div
           aria-hidden="true"
