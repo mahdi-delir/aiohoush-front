@@ -13,7 +13,7 @@ export default function LiquidBg({
   return (
     <div
       className={cn(
-        "backdrop-blur-md backdrop-saturate-150 shadow-2xl rounded-icon [corner-shape:squircle] bg-linear-to-br from-white/5 to-transparent border border-white/20",
+        "backdrop-blur-md backdrop-saturate-150 shadow-2xl rounded-icon [corner-shape:squircle] bg-linear-to-br from-white/15 to-transparent",
         className
       )}
       {...props}

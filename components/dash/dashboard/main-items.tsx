@@ -79,6 +79,7 @@ const menuItems: DashboardMenuItem[] = [
 
     // هنوز permission واقعی Project نداریم.
     enabled: true,
+    alwaysVisible: true,
 
     order: 3,
   },
@@ -87,6 +88,7 @@ const menuItems: DashboardMenuItem[] = [
     title: "هوش مصنوعی",
     href: "/ai",
     icon: ChatBot,
+    alwaysVisible: true,
 
     // هنوز permission واقعی AI نداریم.
     enabled: true,
@@ -188,7 +190,7 @@ export default function MainItems() {
     .sort((a, b) => a.order - b.order);
 
   return (
-    <section className="grid grid-cols-4 gap-2">
+    <section className="grid grid-cols-4 gap-4 py-12">
       {visibleItems.map((item) => (
         <div
           className="flex flex-col items-center justify-center aspect-square"
