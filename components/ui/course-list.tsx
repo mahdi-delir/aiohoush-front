@@ -1,6 +1,7 @@
 import { CourseInfo, CourseList } from "@/types/course";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import LOGO from "@/public/logo.svg";
 
 type CourseListProp = {
   title: string;
@@ -35,7 +36,7 @@ export default function CourseListC({ title, courses }: CourseListProp) {
                 </div>
                 <div className="relative aspect-square max-w-1/3 overflow-hidden rounded-icon bg-element-bg">
                     <Image
-                      src={item.cover || './icon.png'}
+                      src={item.cover || LOGO}
                       fill
                       alt={item.title}
                       className="object-cover"

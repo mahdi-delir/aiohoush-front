@@ -3,6 +3,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Input from "@/components/ui/text-input";
 import { normalizeDigits } from "@/lib/auth-input";
 import Button from "@/components/ui/button";
+import StatusBar from "@/components/ui/status-bar";
 
 type Profile = {
   id: number;
@@ -30,6 +31,8 @@ export default function ProfilePage() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
   useEffect(() => {
     Promise.all([fetch("/api/profile"), fetch("/api/profile/pictures")])
@@ -79,37 +82,59 @@ export default function ProfilePage() {
     setBusy(false);
   }
 
-  async function upload(event: ChangeEvent<HTMLInputElement>) {
+  function upload(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
+
     if (!file) return;
+
     const form = new FormData();
     form.append("picture", file);
-    setBusy(true);
-    const response = await fetch("/api/profile/pictures", {
-      method: "POST",
-      body: form,
-    });
 
-    const text = await response.text();
+    const xhr = new XMLHttpRequest();
 
-    let data: any = {};
+    setUploading(true);
+    setUploadProgress(0);
+    setError("");
+    setMessage("");
 
-    try {
-      data = text ? JSON.parse(text) : {};
-    } catch {
-      data = {
-        detail: "پاسخ نامعتبر از سرور دریافت شد.",
-      };
-    }
+    xhr.open("POST", "/api/profile/pictures");
 
-    if (response.ok) {
-      setPictures((items) => [data, ...items]);
-    } else {
-      setError(errorText(data));
-    }
+    xhr.upload.onprogress = (event) => {
+      if (!event.lengthComputable) return;
 
-    setBusy(false);
-    event.target.value = "";
+      setUploadProgress(Math.round((event.loaded / event.total) * 100));
+    };
+
+    xhr.onload = () => {
+      let data: any = {};
+
+      try {
+        data = xhr.responseText ? JSON.parse(xhr.responseText) : {};
+      } catch {
+        data = {
+          detail: "پاسخ نامعتبر از سرور دریافت شد.",
+        };
+      }
+
+      if (xhr.status >= 200 && xhr.status < 300) {
+        setPictures((items) => [data, ...items]);
+        setUploadProgress(100);
+        setMessage("تصویر با موفقیت آپلود شد.");
+      } else {
+        setError(errorText(data));
+      }
+
+      setUploading(false);
+      event.target.value = "";
+    };
+
+    xhr.onerror = () => {
+      setError("آپلود تصویر با خطا مواجه شد.");
+      setUploading(false);
+      event.target.value = "";
+    };
+
+    xhr.send(form);
   }
 
   async function remove(id: number) {
@@ -154,23 +179,38 @@ export default function ProfilePage() {
         <p className="rounded-2xl bg-red-50 p-4 text-red-600">{error}</p>
       )}
       <section className="rounded-[2rem] bg-card p-6 shadow-sm">
-        <div className="mb-5 flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-bold">تصاویر پروفایل</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              می‌توانی چند تصویر در حساب خود نگه داری.
-            </p>
-          </div>
-          <label className="cursor-pointer rounded-icon bg-primary-green px-4 py-3 text-sm font-medium text-black">
-            افزودن تصویر
+        <div className="flex items-center gap-3">
+          <label
+            className={`rounded-icon bg-primary px-4 py-3 text-sm font-medium text-white ${
+              uploading ? "pointer-events-none opacity-50" : "cursor-pointer"
+            }`}
+          >
+            {uploading ? "در حال آپلود..." : "افزودن تصویر"}
+
             <input
               type="file"
               accept="image/*"
               onChange={upload}
+              disabled={uploading}
               className="hidden"
             />
           </label>
         </div>
+
+        {uploading && (
+          <div className="mt-4 space-y-2">
+            <StatusBar
+              percent={uploadProgress}
+              label="پیشرفت آپلود تصویر پروفایل"
+            />
+
+            <p className="text-xs text-text-muted">
+              {uploadProgress === null
+                ? "در حال شروع آپلود..."
+                : `${uploadProgress.toLocaleString("fa-IR")}٪ آپلود شده`}
+            </p>
+          </div>
+        )}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {pictures.map((picture) => (
             <div
