@@ -15,6 +15,8 @@ import {
   useRequestLoginOtp,
   useVerifyLoginOtp,
 } from '../hooks/use-login-otp'
+import Input from '@/components/ui/text-input'
+import Button from '@/components/ui/button'
 
 
 type Step =
@@ -121,7 +123,7 @@ export function LoginOtpForm() {
             شماره موبایل
           </label>
 
-          <input
+          <Input
             id="mobile"
             name="mobile"
             type="tel"
@@ -136,7 +138,7 @@ export function LoginOtpForm() {
             disabled={
               requestOtp.isPending
             }
-            className="rounded-xl border px-4 py-3 outline-none"
+            className="rounded-xl outline-none"
           />
         </div>
 
@@ -146,18 +148,18 @@ export function LoginOtpForm() {
           </p>
         )}
 
-        <button
+        <Button
           type="submit"
           disabled={
             requestOtp.isPending ||
             !mobile.trim()
           }
-          className="rounded-xl bg-black px-4 py-3 text-white disabled:opacity-50"
+          // className="rounded-xl bg-black px-4 py-3 text-white disabled:opacity-50"
         >
           {requestOtp.isPending
             ? 'در حال ارسال...'
             : 'دریافت کد ورود'}
-        </button>
+        </Button>
       </form>
     )
   }
@@ -183,10 +185,11 @@ export function LoginOtpForm() {
           کد تأیید
         </label>
 
-        <input
+        <Input
           id="code"
           name="code"
           type="text"
+          dir = 'ltr'
           inputMode="numeric"
           autoComplete="one-time-code"
           value={code}
@@ -200,7 +203,7 @@ export function LoginOtpForm() {
           disabled={
             verifyOtp.isPending
           }
-          className="rounded-xl border px-4 py-3 text-center text-xl tracking-[0.5em] outline-none"
+          // className="rounded-xl border px-4 py-3 text-center text-xl tracking-[0.5em] outline-none"
         />
       </div>
 
@@ -210,21 +213,22 @@ export function LoginOtpForm() {
         </p>
       )}
 
-      <button
+      <Button
         type="submit"
         disabled={
           verifyOtp.isPending ||
           code.length !== 6
         }
-        className="rounded-xl bg-black px-4 py-3 text-white disabled:opacity-50"
+        // className="rounded-xl bg-black px-4 py-3 text-white disabled:opacity-50"
       >
         {verifyOtp.isPending
           ? 'در حال بررسی...'
           : 'ورود'}
-      </button>
+      </Button>
 
-      <button
-        type="button"
+      <Button
+        // type="button"
+        variant='secondary'
         disabled={
           verifyOtp.isPending
         }
@@ -233,10 +237,10 @@ export function LoginOtpForm() {
           setMessage(null)
           setStep('mobile')
         }}
-        className="text-sm underline"
+        className="text-sm"
       >
         تغییر شماره موبایل
-      </button>
+      </Button>
     </form>
   )
 }

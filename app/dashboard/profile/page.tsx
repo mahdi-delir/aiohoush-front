@@ -1,321 +1,257 @@
 "use client";
-
-import { FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import Input from "@/components/ui/text-input";
+import { normalizeDigits } from "@/lib/auth-input";
+import Button from "@/components/ui/button";
 
 type Profile = {
   id: number;
-  phone_number: string;
   first_name: string;
   last_name: string;
-  national_id: string;
-  address: string;
+  mobile: string;
   email: string | null;
-  date_joined: string;
+  national_id: string | null;
+  address: string | null;
+  bio: string | null;
+  is_profile_completed: boolean;
 };
+type Picture = { id: number; url: string; created_at: string };
+
+function errorText(data: unknown) {
+  if (!data || typeof data !== "object") return "عملیات انجام نشد.";
+  return Object.values(data as Record<string, unknown>)
+    .flat()
+    .join(" ");
+}
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [pictures, setPictures] = useState<Picture[]>([]);
+  const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const [passwords, setPasswords] = useState({
-    old_password: "",
-    new_password: "",
-    new_password_confirm: "",
-  });
-
   useEffect(() => {
-    fetch("/api/profile", { cache: "no-store" })
-      .then(async (response) => {
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.detail || "خطا در دریافت اطلاعات");
-        }
-
-        setProfile(data);
+    Promise.all([fetch("/api/profile"), fetch("/api/profile/pictures")])
+      .then(async ([p, pics]) => {
+        const profileData = await p.json();
+        const pictureData = await pics.json();
+        if (!p.ok) throw new Error(errorText(profileData));
+        setProfile(profileData);
+        setPictures(Array.isArray(pictureData) ? pictureData : []);
       })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+      .catch((e) => setError(e.message));
   }, []);
 
-  async function saveProfile(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
+  function change(key: keyof Profile, value: string) {
     if (!profile) return;
+    setProfile({
+      ...profile,
+      [key]:
+        key === "national_id"
+          ? normalizeDigits(value).replace(/\D/g, "")
+          : value,
+    });
+  }
 
-    setSaving(true);
+  async function save(event: FormEvent) {
+    event.preventDefault();
+    if (!profile) return;
+    setBusy(true);
     setMessage("");
     setError("");
-
     const response = await fetch("/api/profile", {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        first_name: profile.first_name,
-        last_name: profile.last_name,
-        national_id: profile.national_id,
-        address: profile.address,
+        first_name: profile.first_name.trim(),
+        last_name: profile.last_name.trim(),
+        national_id: normalizeDigits(profile.national_id || ""),
         email: profile.email || "",
+        address: profile.address || "",
+        bio: profile.bio || "",
       }),
     });
-
     const data = await response.json();
-
-    if (!response.ok) {
-      setError(
-        typeof data === "object"
-          ? Object.values(data).flat().join(" ")
-          : "ذخیره اطلاعات انجام نشد",
-      );
-    } else {
-      setProfile(data);
-      setMessage("اطلاعات پروفایل با موفقیت ذخیره شد.");
-    }
-
-    setSaving(false);
+    response.ok
+      ? (setProfile(data), setMessage("پروفایل ذخیره شد."))
+      : setError(errorText(data));
+    setBusy(false);
   }
 
-  async function changePassword(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    setMessage("");
-    setError("");
-
-    if (passwords.new_password !== passwords.new_password_confirm) {
-      setError("تکرار رمز عبور جدید صحیح نیست.");
-      return;
-    }
-
-    const response = await fetch("/api/profile/password", {
+  async function upload(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const form = new FormData();
+    form.append("picture", file);
+    setBusy(true);
+    const response = await fetch("/api/profile/pictures", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(passwords),
+      body: form,
     });
 
-    const data = await response.json();
+    const text = await response.text();
 
-    if (!response.ok) {
-      setError(
-        typeof data === "object"
-          ? Object.values(data).flat().join(" ")
-          : "تغییر رمز عبور انجام نشد",
-      );
-      return;
+    let data: any = {};
+
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch {
+      data = {
+        detail: "پاسخ نامعتبر از سرور دریافت شد.",
+      };
     }
 
-    setPasswords({
-      old_password: "",
-      new_password: "",
-      new_password_confirm: "",
+    if (response.ok) {
+      setPictures((items) => [data, ...items]);
+    } else {
+      setError(errorText(data));
+    }
+
+    setBusy(false);
+    event.target.value = "";
+  }
+
+  async function remove(id: number) {
+    const response = await fetch(`/api/profile/pictures/${id}`, {
+      method: "DELETE",
     });
-
-    setMessage("رمز عبور با موفقیت تغییر کرد.");
+    if (response.ok)
+      setPictures((items) => items.filter((item) => item.id !== id));
   }
 
-  if (loading) {
+  if (!profile)
     return (
-      <div className="flex min-h-[60vh] items-center justify-center text-muted-foreground">
-        در حال دریافت اطلاعات پروفایل...
-      </div>
+      <main dir="rtl" className="p-8">
+        {error || "در حال دریافت پروفایل..."}
+      </main>
     );
-  }
-
-  if (!profile) {
-    return (
-      <div className="p-6 text-center text-red-500">
-        {error || "اطلاعات پروفایل پیدا نشد."}
-      </div>
-    );
-  }
-
-  const fullName =
+  const name =
     `${profile.first_name} ${profile.last_name}`.trim() || "کاربر آیوهوش";
 
   return (
     <main dir="rtl" className="mx-auto max-w-5xl space-y-6 p-4 md:p-8">
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 p-6 text-white shadow-xl md:p-8">
-        <div className="absolute -left-16 -top-20 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
-        <div className="absolute -bottom-20 right-10 h-56 w-56 rounded-full bg-fuchsia-300/20 blur-3xl" />
-
-        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center">
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 text-3xl font-bold backdrop-blur">
-            {fullName.charAt(0)}
+      <header className="overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#171b4d] via-[#252b78] to-[#6d4aff] p-7 text-white shadow-xl">
+        <div className="flex items-center gap-5">
+          <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-white/15 text-3xl font-bold">
+            {name[0]}
           </div>
-
           <div>
-            <p className="mb-1 text-sm text-white/70">پروفایل کاربری</p>
-            <h1 className="text-2xl font-bold">{fullName}</h1>
-            <p className="mt-1 text-sm text-white/75">
-              {profile.phone_number}
+            <p className="text-sm text-white/60">پروفایل کاربری</p>
+            <h1 className="mt-1 text-2xl font-bold">{name}</h1>
+            <p className="mt-1 text-sm text-white/70" dir="ltr">
+              {profile.mobile}
             </p>
           </div>
         </div>
-      </section>
-
+      </header>
       {message && (
-        <div className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+        <p className="rounded-2xl bg-emerald-50 p-4 text-emerald-700">
           {message}
-        </div>
+        </p>
       )}
-
       {error && (
-        <div className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-600">
-          {error}
-        </div>
+        <p className="rounded-2xl bg-red-50 p-4 text-red-600">{error}</p>
       )}
-
-      <section className="rounded-3xl border bg-card p-5 shadow-sm md:p-7">
-        <div className="mb-6">
-          <h2 className="text-xl font-bold">اطلاعات شخصی</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            اطلاعات حساب خود را به‌روزرسانی کنید.
-          </p>
-        </div>
-
-        <form onSubmit={saveProfile} className="grid gap-5 md:grid-cols-2">
-          <label className="space-y-2">
-            <span className="text-sm font-medium">نام</span>
-            <input
-              value={profile.first_name}
-              onChange={(e) =>
-                setProfile({ ...profile, first_name: e.target.value })
-              }
-              className="h-12 w-full rounded-xl border bg-background px-4 outline-none transition focus:border-primary"
-              required
-            />
-          </label>
-
-          <label className="space-y-2">
-            <span className="text-sm font-medium">نام خانوادگی</span>
-            <input
-              value={profile.last_name}
-              onChange={(e) =>
-                setProfile({ ...profile, last_name: e.target.value })
-              }
-              className="h-12 w-full rounded-xl border bg-background px-4 outline-none transition focus:border-primary"
-              required
-            />
-          </label>
-
-          <label className="space-y-2">
-            <span className="text-sm font-medium">شماره موبایل</span>
-            <input
-              value={profile.phone_number}
-              disabled
-              className="h-12 w-full cursor-not-allowed rounded-xl border bg-muted px-4 text-muted-foreground"
-            />
-          </label>
-
-          <label className="space-y-2">
-            <span className="text-sm font-medium">کد ملی</span>
-            <input
-              value={profile.national_id}
-              onChange={(e) =>
-                setProfile({ ...profile, national_id: e.target.value })
-              }
-              maxLength={10}
-              className="h-12 w-full rounded-xl border bg-background px-4 outline-none transition focus:border-primary"
-              required
-            />
-          </label>
-
-          <label className="space-y-2 md:col-span-2">
-            <span className="text-sm font-medium">ایمیل</span>
-            <input
-              type="email"
-              value={profile.email || ""}
-              onChange={(e) =>
-                setProfile({ ...profile, email: e.target.value })
-              }
-              className="h-12 w-full rounded-xl border bg-background px-4 outline-none transition focus:border-primary"
-            />
-          </label>
-
-          <label className="space-y-2 md:col-span-2">
-            <span className="text-sm font-medium">آدرس</span>
-            <textarea
-              value={profile.address}
-              onChange={(e) =>
-                setProfile({ ...profile, address: e.target.value })
-              }
-              rows={4}
-              className="w-full resize-none rounded-xl border bg-background px-4 py-3 outline-none transition focus:border-primary"
-              required
-            />
-          </label>
-
-          <div className="md:col-span-2">
-            <button
-              type="submit"
-              disabled={saving}
-              className="h-12 rounded-xl bg-primary px-7 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
-            >
-              {saving ? "در حال ذخیره..." : "ذخیره تغییرات"}
-            </button>
+      <section className="rounded-[2rem] bg-card p-6 shadow-sm">
+        <div className="mb-5 flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold">تصاویر پروفایل</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              می‌توانی چند تصویر در حساب خود نگه داری.
+            </p>
           </div>
-        </form>
+          <label className="cursor-pointer rounded-icon bg-primary-green px-4 py-3 text-sm font-medium text-black">
+            افزودن تصویر
+            <input
+              type="file"
+              accept="image/*"
+              onChange={upload}
+              className="hidden"
+            />
+          </label>
+        </div>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {pictures.map((picture) => (
+            <div
+              key={picture.id}
+              className="group relative aspect-square overflow-hidden rounded-2xl"
+            >
+              <img
+                src={picture.url}
+                alt="تصویر پروفایل"
+                className="h-full w-full object-cover"
+              />
+              <button
+                type="button"
+                onClick={() => remove(picture.id)}
+                className="absolute bottom-2 left-2 rounded-lg bg-black/65 px-3 py-2 text-xs text-white opacity-0 transition group-hover:opacity-100"
+              >
+                حذف
+              </button>
+            </div>
+          ))}
+          {pictures.length === 0 && (
+            <p className="col-span-full py-8 text-center text-sm text-muted-foreground">
+              هنوز تصویری آپلود نکرده‌ای.
+            </p>
+          )}
+        </div>
       </section>
-
-      <section className="rounded-3xl border bg-card p-5 shadow-sm md:p-7">
-        <div className="mb-6">
-          <h2 className="text-xl font-bold">امنیت حساب</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            برای امنیت بیشتر، رمز عبور خود را مدیریت کنید.
-          </p>
-        </div>
-
-        <form onSubmit={changePassword} className="grid gap-5 md:grid-cols-3">
-          <input
-            type="password"
-            placeholder="رمز عبور فعلی"
-            value={passwords.old_password}
-            onChange={(e) =>
-              setPasswords({ ...passwords, old_password: e.target.value })
-            }
-            className="h-12 rounded-xl border bg-background px-4 outline-none focus:border-primary"
+      <section className="rounded-[2rem] bg-card p-6 shadow-sm">
+        <h2 className="mb-6 text-xl font-bold">اطلاعات حساب</h2>
+        <form onSubmit={save} className="grid gap-5 md:grid-cols-2">
+          <Input
+            value={profile.first_name ?? ""}
+            onChange={(e) => change("first_name", e.target.value)}
+            placeholder="نام"
             required
           />
 
-          <input
-            type="password"
-            placeholder="رمز عبور جدید"
-            value={passwords.new_password}
-            onChange={(e) =>
-              setPasswords({ ...passwords, new_password: e.target.value })
-            }
-            className="h-12 rounded-xl border bg-background px-4 outline-none focus:border-primary"
+          <Input
+            value={profile.last_name ?? ""}
+            onChange={(e) => change("last_name", e.target.value)}
+            placeholder="نام خانوادگی"
             required
           />
 
-          <input
-            type="password"
-            placeholder="تکرار رمز عبور جدید"
-            value={passwords.new_password_confirm}
-            onChange={(e) =>
-              setPasswords({
-                ...passwords,
-                new_password_confirm: e.target.value,
-              })
-            }
-            className="h-12 rounded-xl border bg-background px-4 outline-none focus:border-primary"
-            required
+          <Input
+            value={profile.mobile ?? ""}
+            readOnly
+            disabled
+            dir="ltr"
+            className="cursor-not-allowed opacity-60"
+            placeholder="شماره موبایل"
           />
-
-          <div className="md:col-span-3">
-            <button
-              type="submit"
-              className="h-12 rounded-xl border border-primary px-7 font-medium text-primary transition hover:bg-primary/10"
-            >
-              تغییر رمز عبور
-            </button>
-          </div>
+          <Input
+            value={profile.national_id || ""}
+            onChange={(e) => change("national_id", e.target.value)}
+            inputMode="numeric"
+            maxLength={10}
+            placeholder="کد ملی"
+          />
+          <Input
+            value={profile.email || ""}
+            onChange={(e) => change("email", e.target.value)}
+            type="email"
+            placeholder="ایمیل"
+          />
+          <textarea
+            value={profile.bio || ""}
+            onChange={(e) => change("bio", e.target.value)}
+            maxLength={200}
+            placeholder="بیوگرافی کوتاه"
+            className="min-h-12 rounded-icon bg-card-bg px-4 py-3 outline-none focus:ring-2 focus:ring-primary md:col-span-2"
+          />
+          <textarea
+            value={profile.address || ""}
+            onChange={(e) => change("address", e.target.value)}
+            placeholder="آدرس"
+            className="min-h-24 rounded-icon bg-card-bg px-4 py-3 outline-none focus:ring-2 focus:ring-primary md:col-span-2"
+          />
+          <Button disabled={busy} className="">
+            {busy ? "در حال ذخیره..." : "ذخیره تغییرات"}
+          </Button>
         </form>
       </section>
     </main>
