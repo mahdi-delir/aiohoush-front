@@ -3,7 +3,7 @@
 import Hls from "hls.js";
 import { useEffect, useRef, useState, type VideoHTMLAttributes } from "react";
 
-import { cn, downloadFile } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import Button from "./button";
 import { VideoItem } from "@/types/video";
 import FileUpload from "./file-upload";
@@ -25,6 +25,27 @@ export function Video({
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasError, setHasError] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
+
+  const isLocked = item.is_locked === true;
+
+  async function handleSourceDownload() {
+    setDownloadError(null);
+    setIsDownloading(true);
+
+    try {
+      await downloadSessionSourceCode(item.id);
+    } catch (error) {
+      setDownloadError(
+        error instanceof Error
+          ? error.message
+          : "دریافت سورس کد با خطا مواجه شد.",
+      );
+    } finally {
+      setIsDownloading(false);
+    }
+  }
 
   useEffect(() => {
     const video = videoRef.current;
@@ -58,6 +79,20 @@ export function Video({
     };
   }, [item.playerUrl]);
 
+  if (isLocked) {
+    return (
+      <section className="rounded-square overflow-hidden bg-card-bg">
+        {item?.title && <h2 className="font-bold text-xl m-4">{item.title}</h2>}
+        <div className="flex aspect-video flex-col items-center justify-center gap-2 bg-black px-4 text-center text-sm text-white">
+          <span className="font-bold">این جلسه قفل است</span>
+          <span className="text-text-muted">
+            برای مشاهدهٔ این جلسه باید دوره را تهیه کنید.
+          </span>
+        </div>
+      </section>
+    );
+  }
+
   if (hasError) {
     return (
       <div className="flex aspect-video items-center justify-center rounded-square bg-black text-sm text-white">
@@ -89,17 +124,81 @@ export function Video({
           //   ارسال تمرین
           // </Button>
         )}
-        {item?.has_source_code && (
-          <Button
-            variant="secondary"
-            size="sm"
-            className="w-fit m-4"
-            onClick={() => downloadFile(item.source_code_url ?? "")}
-          >
-            دریافت سورس کد
-          </Button>
+        {item?.has_source_code && item.source_code_url && (
+          <div className="m-4 flex flex-col items-end gap-1">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="w-fit"
+              disabled={isDownloading}
+              onClick={handleSourceDownload}
+            >
+              {isDownloading ? "در حال دریافت..." : "دریافت سورس کد"}
+            </Button>
+            {downloadError && (
+              <span role="alert" className="text-xs text-danger">
+                {downloadError}
+              </span>
+            )}
+          </div>
         )}
       </div>
     </section>
   );
+}
+
+
+function getFileName(
+  contentDisposition: string | null,
+): string {
+  if (!contentDisposition) return "source-code";
+
+  const encoded = /filename\*=UTF-8''([^;]+)/i.exec(contentDisposition);
+  if (encoded) {
+    try {
+      return decodeURIComponent(encoded[1]);
+    } catch {
+      // ادامه با filename ساده
+    }
+  }
+
+  const plain = /filename="?([^";]+)"?/i.exec(contentDisposition);
+  return plain?.[1] ?? "source-code";
+}
+
+/*
+ * سورس کد از BFF (same-origin) دریافت می‌شود تا توکن کاربر
+ * سمت سرور اضافه و دسترسی در Django بررسی شود.
+ */
+async function downloadSessionSourceCode(
+  sessionId: number,
+): Promise<void> {
+  const response = await fetch(
+    `/api/course-sessions/${sessionId}/source-code`,
+    {
+      credentials: "same-origin",
+    },
+  );
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw new Error(
+      body?.message || "دریافت سورس کد با خطا مواجه شد.",
+    );
+  }
+
+  const blob = await response.blob();
+  const blobUrl = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = getFileName(
+    response.headers.get("Content-Disposition"),
+  );
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  // کمی صبر تا مرورگر دانلود را شروع کند
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
 }

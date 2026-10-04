@@ -63,7 +63,7 @@ export default function CourseContent({ slug }: CourseContentProps) {
             item={selectedEpisode}
             poster={selectedEpisode.cover ?? ""}
             homeworkUpload={
-              selectedEpisode.has_homework
+              selectedEpisode.has_homework && !selectedEpisode.is_locked
                 ? {
                     url: `/api/course-sessions/${selectedEpisode.id}/homework`,
                     fileField: "attachment",
@@ -180,6 +180,14 @@ export default function CourseContent({ slug }: CourseContentProps) {
                             {episod.order}
                           </span>
                           <h4>{episod.title || episod.description}</h4>
+                          {episod.is_locked && (
+                            <span
+                              className="text-xs text-text-muted bg-element-bg px-2 py-0.5 rounded-full"
+                              aria-label="جلسه قفل است"
+                            >
+                              قفل
+                            </span>
+                          )}
                         </div>
 
                         <div className="relative w-1/3 aspect-video rounded-icon overflow-hidden">
