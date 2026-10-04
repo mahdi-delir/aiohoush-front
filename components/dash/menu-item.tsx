@@ -1,6 +1,7 @@
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import Button from "../ui/button";
 import { useLogout } from "@/features/auth/hooks/use-logout";
+import Link from "next/link";
 export default function MenuItems() {
   const { data: me } = useCurrentUser();
   const logoutMutation = useLogout();
@@ -14,7 +15,9 @@ export default function MenuItems() {
         <p className="text-text-muted">{user?.mobile}</p>
       </div>
       <ul>
-        <li className="p-4 hover:bg-black/30">پروفایل</li>
+        <li className="p-4 hover:bg-black/30">
+          <Link href="/dashboard/profile">پروفایل من</Link>
+        </li>
         <li className="p-4 hover:bg-black/30">پشتیبانی</li>
         <li className="p-4 hover:bg-black/30">قوانین و مقررات</li>
         <li className="p-4 hover:bg-black/30">گواهینامه ها</li>

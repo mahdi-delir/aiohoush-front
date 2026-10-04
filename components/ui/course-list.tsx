@@ -33,13 +33,14 @@ export default function CourseListC({ title, courses }: CourseListProp) {
                     {item.duration} {item.level}
                   </p>
                 </div>
-                <div className="relative overflow-hidden max-w-1/3 bg-element-bg rounded-icon aspect-square">
-                  <Image
-                    src={item.cover}
-                    fill
-                    alt={item.title}
-                    className="object-cover"
-                  />
+                <div className="relative aspect-square max-w-1/3 overflow-hidden rounded-icon bg-element-bg">
+                    <Image
+                      src={item.cover || './icon.png'}
+                      fill
+                      alt={item.title}
+                      className="object-cover"
+                    />
+                    
                 </div>
               </div>
             </li>

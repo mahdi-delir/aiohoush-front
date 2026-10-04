@@ -78,7 +78,7 @@ const menuItems: DashboardMenuItem[] = [
     icon: Code,
 
     // هنوز permission واقعی Project نداریم.
-    enabled: false,
+    enabled: true,
 
     order: 3,
   },
@@ -89,7 +89,7 @@ const menuItems: DashboardMenuItem[] = [
     icon: ChatBot,
 
     // هنوز permission واقعی AI نداریم.
-    enabled: false,
+    enabled: true,
 
     order: 4,
   },
