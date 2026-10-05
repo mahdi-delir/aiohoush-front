@@ -2,6 +2,8 @@ import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import Button from "../ui/button";
 import { useLogout } from "@/features/auth/hooks/use-logout";
 import Link from "next/link";
+import Image from "next/image";
+import TicketIcon from "@/assets/puffy-icons/ticket.svg";
 export default function MenuItems() {
   const { data: me } = useCurrentUser();
   const logoutMutation = useLogout();
@@ -18,7 +20,12 @@ export default function MenuItems() {
         <li className="p-4 hover:bg-black/30">
           <Link href="/dashboard/profile">پروفایل من</Link>
         </li>
-        <li className="p-4 hover:bg-black/30">پشتیبانی</li>
+        <li className="p-4 hover:bg-black/30">
+          <Link href="/dashboard/tickets" className="flex items-center gap-2">
+            <Image src={TicketIcon} alt="" width={22} height={22} />
+            پشتیبانی
+          </Link>
+        </li>
         <li className="p-4 hover:bg-black/30">قوانین و مقررات</li>
         <li className="p-4 hover:bg-black/30">گواهینامه ها</li>
         <li className="p-4 hover:bg-black/30">درباره آیوهوش</li>

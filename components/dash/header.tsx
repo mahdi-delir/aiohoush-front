@@ -20,8 +20,11 @@ export default function DashboardHeader() {
   const routeKey = segments.join("/");
   const router = useRouter();
 
+  // مسیرهای پویا (مثلاً tickets/12) عنوان بخش اصلی را می‌گیرند.
   const currentRoute =
-    dashboardRoutes[routeKey as DashboardRoute] ?? dashboardRoutes.home;
+    dashboardRoutes[routeKey as DashboardRoute] ??
+    dashboardRoutes[segments[0] as DashboardRoute] ??
+    dashboardRoutes.home;
 
   const isHomeRoute = segments.length === 0;
 

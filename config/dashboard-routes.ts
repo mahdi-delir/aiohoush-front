@@ -16,6 +16,12 @@ export const dashboardRoutes = {
     },
     courses: {
         title: 'دوره های آموزشی'
+    },
+    tickets: {
+        title: 'پشتیبانی'
+    },
+    "tickets/new": {
+        title: 'تیکت جدید'
     }
 } as const;
 
