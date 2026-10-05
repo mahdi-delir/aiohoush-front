@@ -8,6 +8,7 @@ import Button from "./button";
 import { VideoItem } from "@/types/video";
 import FileUpload from "./file-upload";
 import { UploadTarget } from "@/lib/upload-files";
+import { useWatchTracker } from "@/features/watch/use-watch-tracker";
 
 interface VideoPlayerProps extends Omit<
   VideoHTMLAttributes<HTMLVideoElement>,
@@ -15,12 +16,18 @@ interface VideoPlayerProps extends Omit<
 > {
   item: VideoItem;
   homeworkUpload?: UploadTarget;
+  /** شناسهٔ جلسهٔ دوره برای ثبت پیشرفت تماشا؛ برای ویدئوهای هدیه خالی. */
+  trackSessionId?: number;
+  /** وقتی جلسه تکمیل شد یا نوبت تماشا تمام شد. */
+  onWatchProgress?: () => void;
 }
 
 export function Video({
   item,
   className,
   homeworkUpload,
+  trackSessionId,
+  onWatchProgress,
   ...videoProps
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -29,6 +36,12 @@ export function Video({
   const [downloadError, setDownloadError] = useState<string | null>(null);
 
   const isLocked = item.is_locked === true;
+
+  useWatchTracker(
+    videoRef,
+    isLocked ? undefined : trackSessionId,
+    onWatchProgress,
+  );
 
   async function handleSourceDownload() {
     setDownloadError(null);
@@ -180,7 +193,11 @@ async function downloadSessionSourceCode(
     },
   );
 
-  if (!response.ok) {
+  // خطاهای قابل‌پیش‌بینی به‌صورت JSON با success=false برمی‌گردند
+  // (حتی با HTTP 200)؛ فایل واقعی هرگز JSON نیست.
+  const contentType = response.headers.get("Content-Type") ?? "";
+
+  if (!response.ok || contentType.includes("application/json")) {
     const body = await response.json().catch(() => null);
     throw new Error(
       body?.message || "دریافت سورس کد با خطا مواجه شد.",

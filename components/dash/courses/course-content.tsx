@@ -7,6 +7,8 @@ import Left from "@/assets/puffy-icons/left.svg";
 import { useId, useRef, useState } from "react";
 import CourseHomework from "./course-homework";
 import SessionHomework from "./session-homework";
+import { useQueryClient } from "@tanstack/react-query";
+import { courseQueryOptions } from "@/features/queries/course-query";
 const courseTabs = [
   { id: "episods", label: "جلسات دوره" },
   { id: "aboutCourse", label: "درباره دوره" },
@@ -21,6 +23,14 @@ type CourseContentProps = {
 
 export default function CourseContent({ slug }: CourseContentProps) {
   const { data: res, isPending, isError } = useCourse(slug);
+  const queryClient = useQueryClient();
+
+  // بعد از تکمیل یا پایان یک جلسه، درصدها و وضعیت دوره تازه شوند.
+  const refreshCourse = () => {
+    void queryClient.invalidateQueries({
+      queryKey: courseQueryOptions(slug).queryKey,
+    });
+  };
   const tabId = useId();
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const [openSeasons, setOpenSeasons] = useState<Record<number, boolean>>({});
@@ -62,6 +72,8 @@ export default function CourseContent({ slug }: CourseContentProps) {
             key={selectedEpisode.id}
             item={selectedEpisode}
             poster={selectedEpisode.cover ?? ""}
+            trackSessionId={selectedEpisode.id}
+            onWatchProgress={refreshCourse}
             homeworkUpload={
               selectedEpisode.has_homework && !selectedEpisode.is_locked
                 ? {
@@ -201,6 +213,22 @@ export default function CourseContent({ slug }: CourseContentProps) {
                           <span className="absolute bottom-1 right-3 bg-black px-1 rounded-icon text-xs">
                             {episod.duration}
                           </span>
+
+                          {!!episod.watched_percent && (
+                            <div
+                              className="absolute inset-x-0 bottom-0 h-1 bg-black/60"
+                              role="progressbar"
+                              aria-label="میزان مشاهده"
+                              aria-valuenow={episod.watched_percent}
+                              aria-valuemin={0}
+                              aria-valuemax={100}
+                            >
+                              <div
+                                className="h-full bg-primary-green"
+                                style={{ width: `${episod.watched_percent}%` }}
+                              />
+                            </div>
+                          )}
                         </div>
                       </li>
                     ))}

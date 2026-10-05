@@ -7,6 +7,7 @@ import { isAxiosError } from "axios";
 import { ChangeEvent, useId, useRef, useState } from "react";
 import Button from "./button";
 import StatusBar from "./status-bar";
+import { HOMEWORK_ACCEPT } from "@/lib/homework-files";
 
 type Phase =
   | "idle"
@@ -114,6 +115,7 @@ export default function FileUpload({
     <div className="w-full flex flex-col gap-4">
       <input
         type="file"
+        accept={HOMEWORK_ACCEPT}
         name=""
         id=""
         hidden

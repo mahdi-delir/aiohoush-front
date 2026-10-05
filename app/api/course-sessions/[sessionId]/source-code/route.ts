@@ -21,16 +21,11 @@ export async function GET(
   const { sessionId } = await context.params;
 
   if (!/^\d+$/.test(sessionId)) {
-    return Response.json(
-      {
-        success: false,
-        message: "شناسه جلسه معتبر نیست.",
-        called_by: "webapp",
-      },
-      {
-        status: 400,
-      },
-    );
+    return Response.json({
+      success: false,
+      message: "شناسه جلسه معتبر نیست.",
+      called_by: "webapp",
+    });
   }
 
   const response = await fetchDjango(
@@ -40,8 +35,10 @@ export async function GET(
     },
   );
 
-  // خطاها (۴۰۱/۴۰۳/۴۰۴) به همان شکل JSON معمول برگردانده می‌شوند.
-  if (!response.ok) {
+  // خطاها (success=false یا خطای سرور) به همان شکل JSON برمی‌گردند.
+  const contentType = response.headers.get("Content-Type") ?? "";
+
+  if (!response.ok || contentType.includes("application/json")) {
     return forwardDjangoResponse(response);
   }
 

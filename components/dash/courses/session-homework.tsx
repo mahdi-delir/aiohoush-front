@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { HOMEWORK_ACCEPT } from "@/lib/homework-files";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
@@ -214,6 +215,7 @@ export default function SessionHomework({
           <input
             id={`homework-file-${sessionId}`}
             type="file"
+            accept={HOMEWORK_ACCEPT}
             onChange={(event) =>
               setAttachment(
                 event.target.files?.[0] ?? null,

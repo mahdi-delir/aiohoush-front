@@ -20,6 +20,8 @@ type Picture = { id: number; url: string; created_at: string };
 
 function errorText(data: unknown) {
   if (!data || typeof data !== "object") return "عملیات انجام نشد.";
+  const message = (data as { message?: unknown }).message;
+  if (typeof message === "string" && message) return message;
   return Object.values(data as Record<string, unknown>)
     .flat()
     .join(" ");
@@ -76,7 +78,7 @@ export default function ProfilePage() {
       }),
     });
     const data = await response.json();
-    response.ok
+    response.ok && data?.success !== false
       ? (setProfile(data), setMessage("پروفایل ذخیره شد."))
       : setError(errorText(data));
     setBusy(false);
@@ -116,7 +118,8 @@ export default function ProfilePage() {
         };
       }
 
-      if (xhr.status >= 200 && xhr.status < 300) {
+      // خطای قابل‌پیش‌بینی با HTTP 200 و success=false می‌آید.
+      if (xhr.status >= 200 && xhr.status < 300 && data?.success !== false) {
         setPictures((items) => [data, ...items]);
         setUploadProgress(100);
         setMessage("تصویر با موفقیت آپلود شد.");
@@ -141,8 +144,10 @@ export default function ProfilePage() {
     const response = await fetch(`/api/profile/pictures/${id}`, {
       method: "DELETE",
     });
-    if (response.ok)
+    const data = await response.json().catch(() => null);
+    if (response.ok && data?.success !== false)
       setPictures((items) => items.filter((item) => item.id !== id));
+    else setError(errorText(data));
   }
 
   if (!profile)
@@ -189,7 +194,7 @@ export default function ProfilePage() {
 
             <input
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp"
               onChange={upload}
               disabled={uploading}
               className="hidden"
