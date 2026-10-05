@@ -83,8 +83,28 @@ export default function CourseContent({ slug }: CourseContentProps) {
                 : undefined
             }
           />
+        ) : course?.course.intro_video ? (
+          // تا وقتی جلسه‌ای انتخاب نشده، ویدئوی معرفی دوره پخش می‌شود.
+          <Video
+            key="course-intro"
+            item={{
+              id: 0,
+              title: `معرفی دورهٔ ${course.course.title}`,
+              playerUrl: course.course.intro_video,
+              order: 0,
+              duration: "",
+              has_source_code: false,
+              has_homework: false,
+              is_public: true,
+            }}
+            poster={course.course.cover || undefined}
+          />
         ) : (
-          <p>هنوز جلسه‌ای برای این دوره ثبت نشده است.</p>
+          <p className="rounded-square bg-card-bg p-6 text-sm leading-7 text-text-muted">
+            {episodes?.length
+              ? "برای شروع، یکی از جلسات را از لیست زیر انتخاب کنید."
+              : "هنوز جلسه‌ای برای این دوره ثبت نشده است."}
+          </p>
         )}
       </section>
 

@@ -69,7 +69,12 @@ export function Video({
 
     let hls: Hls | null = null;
 
-    if (Hls.isSupported()) {
+    // فایل معمولی (مثلاً mp4) مستقیم پخش می‌شود؛ hls.js فقط برای m3u8.
+    const isHls = /\.m3u8(\?|#|$)/i.test(item.playerUrl);
+
+    if (!isHls) {
+      video.src = item.playerUrl;
+    } else if (Hls.isSupported()) {
       hls = new Hls();
 
       hls.loadSource(item.playerUrl);

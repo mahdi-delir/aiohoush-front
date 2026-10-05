@@ -19,6 +19,8 @@ export interface CourseInfo {
   short_description: string;
   description: string;
   cover: string;
+  /** ویدئوی معرفی دوره؛ برای همه (حتی بدون خرید) قابل پخش است. */
+  intro_video?: string | null;
   duration: string;
   episod_count: number;
   season_count: number;
