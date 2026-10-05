@@ -8,7 +8,11 @@ export type CategoryIcon =
   | "code"
   | "chatbot"
   | "drawing"
-  | "web";
+  | "web"
+  | "microphone"
+  | "book"
+  | "calculator"
+  | "training";
   
 export interface CategoryItem {
   id: number
