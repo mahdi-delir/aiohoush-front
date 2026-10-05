@@ -3,6 +3,7 @@ import "server-only";
 import { headers as nextHeaders } from "next/headers";
 
 import { getSessionId } from "@/lib/auth/cookies";
+import { setClientIpHeaders } from "@/lib/client-ip";
 
 import {
   AuthSessionMissingError,
@@ -23,9 +24,13 @@ interface DjangoFetchOptions extends RequestInit {
 function buildHeaders(
   initialHeaders: HeadersInit | undefined,
   access: string | undefined,
-  browserUserAgent: string | null,
+  incomingHeaders: Headers,
 ): Headers {
   const headers = new Headers(initialHeaders);
+  const browserUserAgent =
+    incomingHeaders.get("user-agent");
+
+  setClientIpHeaders(headers, incomingHeaders);
 
   if (access) {
     headers.set(
@@ -57,9 +62,9 @@ export async function fetchDjango(
     ...fetchOptions
   } = options;
 
-  const incomingHeaders = await nextHeaders();
-  const browserUserAgent =
-    incomingHeaders.get("user-agent");
+  const incomingHeaders = new Headers(
+    await nextHeaders(),
+  );
 
   const sessionId =
     await getSessionId();
@@ -77,7 +82,7 @@ export async function fetchDjango(
       headers: buildHeaders(
         fetchOptions.headers,
         authSession?.access,
-        browserUserAgent,
+        incomingHeaders,
       ),
 
       cache: "no-store",
@@ -108,7 +113,7 @@ export async function fetchDjango(
         headers: buildHeaders(
           fetchOptions.headers,
           tokens.access,
-          browserUserAgent,
+          incomingHeaders,
         ),
 
         cache: "no-store",

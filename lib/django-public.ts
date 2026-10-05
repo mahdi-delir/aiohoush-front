@@ -1,6 +1,8 @@
 import 'server-only'
 
 import { headers as nextHeaders } from "next/headers";
+
+import { setClientIpHeaders } from "@/lib/client-ip";
 function getPositiveNumberEnv(name: string): number {
   const raw = process.env[name]
 
@@ -43,19 +45,29 @@ export async function postDjangoJson(
   );
 
   try {
-    const incomingHeaders = await nextHeaders();
+    const incomingHeaders = new Headers(
+      await nextHeaders(),
+    );
     const browserUserAgent =
       incomingHeaders.get("user-agent");
 
-    const requestHeaders: HeadersInit = {
+    const requestHeaders = new Headers({
       Accept: "application/json",
       "Content-Type": "application/json",
-    };
+    });
 
     if (browserUserAgent) {
-      requestHeaders["User-Agent"] =
-        browserUserAgent;
+      requestHeaders.set(
+        "User-Agent",
+        browserUserAgent,
+      );
     }
+
+    // برای throttle درخواست OTP و ثبت IP نشست
+    setClientIpHeaders(
+      requestHeaders,
+      incomingHeaders,
+    );
 
     return await fetch(
       getDjangoUrl(path),
