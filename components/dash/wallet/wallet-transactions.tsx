@@ -1,5 +1,9 @@
-import type { Transaction, Wallet } from "@/types/wallet";
-import { formatWalletAmount, formatWalletDate, getWalletCurrency } from "./wallet-format";
+import type { Transaction } from "@/types/wallet";
+import {
+  formatWalletAmount,
+  formatWalletDate,
+  WALLET_CURRENCY_LABEL,
+} from "./wallet-format";
 
 const transactionStatuses = {
   confirmed: { title: "تأیید شده", className: "sr-only" },
@@ -7,10 +11,7 @@ const transactionStatuses = {
   rejected: { title: "رد شده", className: "text-red-300" },
 } as const;
 
-function TransactionRow({ transaction, currency }: {
-  transaction: Transaction;
-  currency: Wallet["currency"];
-}) {
+function TransactionRow({ transaction }: { transaction: Transaction }) {
   const isDeposit = transaction.side === "deposit";
   const isConfirmed = transaction.status === "confirmed";
   const status = transactionStatuses[transaction.status];
@@ -44,8 +45,22 @@ function TransactionRow({ transaction, currency }: {
         <h3 className="text-sm leading-6 font-bold wrap-break-word">
           {transaction.title}
         </h3>
+        {transaction.description && (
+          <p className="mt-0.5 text-xs leading-6 text-text-muted wrap-break-word">
+            {transaction.description}
+          </p>
+        )}
         <p className="mt-0.5 text-xs text-text-muted">
           <time dateTime={transaction.date}>{formatWalletDate(transaction.date)}</time>
+          {transaction.tracking_code && (
+            <>
+              {" · "}
+              <span>کد پیگیری </span>
+              <bdi dir="ltr" className="tabular-nums">
+                {transaction.tracking_code}
+              </bdi>
+            </>
+          )}
         </p>
         <span className={`mt-1 block text-xs ${status.className}`}>{status.title}</span>
       </div>
@@ -63,15 +78,14 @@ function TransactionRow({ transaction, currency }: {
         <bdi dir="ltr">
           {isDeposit ? "+" : "−"}{formatWalletAmount(transaction.amount)}
         </bdi>{" "}
-        <span>{getWalletCurrency(currency)}</span>
+        <span>{WALLET_CURRENCY_LABEL}</span>
       </p>
     </li>
   );
 }
 
-export default function WalletTransactions({ transactions, currency }: {
+export default function WalletTransactions({ transactions }: {
   transactions: Transaction[];
-  currency: Wallet["currency"];
 }) {
   const sorted = [...transactions].sort((a, b) => {
     const first = Date.parse(a.date);
@@ -92,12 +106,8 @@ export default function WalletTransactions({ transactions, currency }: {
   return (
     <div>
       <ul className="space-y-3">
-        {recent.map((transaction, index) => (
-          <TransactionRow
-            key={`${transaction.trackId ?? transaction.date}-${index}`}
-            transaction={transaction}
-            currency={currency}
-          />
+        {recent.map((transaction) => (
+          <TransactionRow key={transaction.id} transaction={transaction} />
         ))}
       </ul>
       {remaining.length > 0 && (
@@ -110,12 +120,8 @@ export default function WalletTransactions({ transactions, currency }: {
             تراکنش‌های بیشتر ({formatWalletAmount(remaining.length)})
           </summary>
           <ul className="mt-3 space-y-3">
-            {remaining.map((transaction, index) => (
-              <TransactionRow
-                key={`${transaction.trackId ?? transaction.date}-${index}`}
-                transaction={transaction}
-                currency={currency}
-              />
+            {remaining.map((transaction) => (
+              <TransactionRow key={transaction.id} transaction={transaction} />
             ))}
           </ul>
         </details>

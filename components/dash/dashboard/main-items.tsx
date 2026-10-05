@@ -101,8 +101,8 @@ const menuItems: DashboardMenuItem[] = [
     href: "/wallet",
     icon: Wallet,
 
-    // مدل و permission کیف پول
-    // هنوز ساخته نشده.
+    // کیف پول برای همهٔ نقش‌ها (دانشجو، استاد، کارمند و ...) است.
+    alwaysVisible: true,
     enabled: true,
 
     order: 5,

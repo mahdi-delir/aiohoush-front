@@ -1,5 +1,3 @@
-import type { Wallet } from "@/types/wallet";
-
 const numberFormatter = new Intl.NumberFormat("fa-IR");
 const dateFormatter = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
   timeZone: "Asia/Tehran",
@@ -8,12 +6,11 @@ const dateFormatter = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
   day: "numeric",
 });
 
-export function formatWalletAmount(amount: number): string {
-  return numberFormatter.format(amount);
-}
+export const WALLET_CURRENCY_LABEL = "تومان";
 
-export function getWalletCurrency(currency: Wallet["currency"]): string {
-  return currency === "IRT" ? "تومان" : "ریال";
+/** مبلغ ریالی API را به تومان نمایش می‌دهد (بدون علامت). */
+export function formatWalletAmount(rial: number): string {
+  return numberFormatter.format(Math.trunc(Math.abs(rial) / 10));
 }
 
 export function formatWalletDate(value: string): string {
