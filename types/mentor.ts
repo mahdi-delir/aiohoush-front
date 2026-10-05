@@ -7,6 +7,8 @@ export interface MentorProfile {
     bio: string;
     avatarUrl: string | null;
     specialties: string[];
+    mobile: string;
+    telegramId: string | null;
 }
 
 export interface MentorReviews {
@@ -17,7 +19,11 @@ export interface MentorReviews {
     createdAt: string;
 }
 
-export interface MyMentorData{
+export interface MyMentorData {
     mentor: MentorProfile | null;
-    reviews: MentorReviews[]
+    reviews: MentorReviews[];
+    /** نظر خود دانشجو؛ هر دانشجو فقط یک بار نظر می‌دهد. */
+    myReview: MentorReviews | null;
+    /** درخواست منتور باز (فقط وقتی منتور ندارد) */
+    mentorRequest: { createdAt: string } | null;
 }

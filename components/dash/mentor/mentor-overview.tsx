@@ -2,6 +2,7 @@ import type { MyMentorData } from "@/types/mentor";
 import { summarizeMentorReviews } from "@/lib/mentor-summary";
 import MentorAvatar from "./mentor-avatar";
 import MentorReviewForm from "./mentor-review-form";
+import NoMentor from "./no-mentor";
 import RatingStars, { StarIcon } from "./rating-stars";
 import StatusBar from "@/components/ui/status-bar";
 
@@ -14,18 +15,11 @@ const date = new Intl.DateTimeFormat("fa-IR", {
 });
 
 export default function MentorOverview({ data }: { data: MyMentorData }) {
-  const { mentor, reviews } = data;
+  const { mentor, reviews, myReview, mentorRequest } = data;
   const summary = summarizeMentorReviews(reviews);
 
   if (!mentor) {
-    return (
-      <section className="rounded-square border border-white/10 bg-card-bg px-6 py-12 text-center">
-        <h1 className="text-xl font-bold">منتور من</h1>
-        <p className="mt-4 text-sm leading-7 text-text-muted">
-          هنوز منتوری برای شما تعیین نشده است. پس از تعیین منتور، معرفی و دیدگاه‌های او اینجا نمایش داده می‌شود.
-        </p>
-      </section>
-    );
+    return <NoMentor requestedAt={mentorRequest?.createdAt ?? null} />;
   }
 
   return (
@@ -46,6 +40,7 @@ export default function MentorOverview({ data }: { data: MyMentorData }) {
         <div className="relative px-5 pb-6 sm:px-7 sm:pb-7">
           <div className="-mt-14 mb-6 flex flex-wrap items-end justify-between gap-5">
             <MentorAvatar key={mentor.avatarUrl ?? mentor.id} src={mentor.avatarUrl} name={mentor.name} />
+            {!myReview && (
             <a
               href="#my-mentor-review"
               className="
@@ -57,10 +52,42 @@ export default function MentorOverview({ data }: { data: MyMentorData }) {
               <StarIcon filled={false} />
               ثبت تجربهٔ من
             </a>
+            )}
           </div>
           <p className="mb-2 text-xs text-text-muted">منتور شما</p>
           <h2 id="mentor-name" className="text-2xl font-bold sm:text-3xl">{mentor.name}</h2>
-          <p className="mt-2 text-sm leading-7 text-text-muted">{mentor.headline}</p>
+          {mentor.headline && (
+            <p className="mt-2 text-sm leading-7 text-text-muted">{mentor.headline}</p>
+          )}
+
+          <ul aria-label="راه‌های ارتباط با منتور" className="mt-5 flex flex-wrap gap-2">
+            <li>
+              <a
+                href={`tel:${mentor.mobile}`}
+                className="inline-flex min-h-11 items-center gap-2 rounded-full bg-element-bg px-4 text-sm hover:text-approve focus-visible:outline-2 focus-visible:outline-approve"
+              >
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-4">
+                  <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2" />
+                </svg>
+                <bdi dir="ltr" className="tabular-nums">{mentor.mobile}</bdi>
+              </a>
+            </li>
+            {mentor.telegramId && (
+              <li>
+                <a
+                  href={`https://t.me/${encodeURIComponent(mentor.telegramId)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-full bg-element-bg px-4 text-sm hover:text-approve focus-visible:outline-2 focus-visible:outline-approve"
+                >
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className="size-4">
+                    <path d="M21.5 4.3 18.4 19c-.2 1-.9 1.3-1.8.8l-4.7-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.8 8.7-7.9c.4-.3-.1-.5-.6-.2L6.3 12.8l-4.6-1.4c-1-.3-1-1 .2-1.5L20.2 3c.8-.3 1.6.2 1.3 1.3Z" />
+                  </svg>
+                  <bdi dir="ltr">@{mentor.telegramId}</bdi>
+                </a>
+              </li>
+            )}
+          </ul>
           {mentor.specialties.length > 0 && (
             <ul aria-label="تخصص‌های منتور" className="mt-4 flex flex-wrap gap-2">
               {mentor.specialties.map((specialty) => (
@@ -103,7 +130,7 @@ export default function MentorOverview({ data }: { data: MyMentorData }) {
                   {number.format(rating)}
                   <StarIcon filled className="size-3 text-amber-300" />
                 </span>
-                <StatusBar percent={(count/summary.total)*100}/>
+                <StatusBar percent={summary.total ? (count / summary.total) * 100 : 0} />
                 <span className="w-5 text-end text-xs text-text-muted">{number.format(count)}</span>
               </li>
             ))}
@@ -151,7 +178,7 @@ export default function MentorOverview({ data }: { data: MyMentorData }) {
       </section>
 
       <div id="my-mentor-review" className="scroll-mt-24">
-        <MentorReviewForm key={mentor.id} mentorName={mentor.name} />
+        <MentorReviewForm key={mentor.id} mentorName={mentor.name} myReview={myReview} />
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ type Profile = {
   mobile: string;
   email: string | null;
   national_id: string | null;
+  telegram_id: string | null;
   address: string | null;
   bio: string | null;
   is_profile_completed: boolean;
@@ -73,6 +74,7 @@ export default function ProfilePage() {
         last_name: profile.last_name.trim(),
         national_id: normalizeDigits(profile.national_id || ""),
         email: profile.email || "",
+        telegram_id: profile.telegram_id || "",
         address: profile.address || "",
         bio: profile.bio || "",
       }),
@@ -280,6 +282,13 @@ export default function ProfilePage() {
             onChange={(e) => change("email", e.target.value)}
             type="email"
             placeholder="ایمیل"
+          />
+          <Input
+            value={profile.telegram_id || ""}
+            onChange={(e) => change("telegram_id", e.target.value)}
+            dir="ltr"
+            autoComplete="off"
+            placeholder="آی‌دی تلگرام (مثلاً @aiohoush)"
           />
           <textarea
             value={profile.bio || ""}

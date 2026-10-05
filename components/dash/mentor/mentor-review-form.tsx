@@ -1,23 +1,70 @@
 "use client";
 
 import { useId, useState, type FormEvent } from "react";
-import type { MentorRating } from "@/types/mentor";
+import { useRouter } from "next/navigation";
+import type { MentorRating, MentorReviews } from "@/types/mentor";
 import RatingStars, { StarIcon } from "./rating-stars";
 
 const ratings: MentorRating[] = [1, 2, 3, 4, 5];
 const ratingLabels = ["", "ضعیف", "نیازمند بهبود", "متوسط", "خوب", "عالی"];
 
-export default function MentorReviewForm({ mentorName }: { mentorName: string }) {
+export default function MentorReviewForm({
+  mentorName,
+  myReview,
+}: {
+  mentorName: string;
+  myReview: MentorReviews | null;
+}) {
   const id = useId();
+  const router = useRouter();
   const [rating, setRating] = useState<MentorRating | null>(null);
   const [text, setText] = useState("");
-  const [preview, setPreview] = useState<{ rating: MentorRating; text: string } | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (rating === null) return;
-    // Local preview only: no request, published review or aggregate mutation.
-    setPreview({ rating, text: text.trim() });
+    if (rating === null || submitting) return;
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/my-mentor/reviews", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rating, text: text.trim() }),
+      });
+      const body = await response.json().catch(() => null);
+
+      if (!response.ok || !body?.success) {
+        throw new Error(body?.message || "ثبت نظر با خطا مواجه شد.");
+      }
+
+      // صفحه از سرور دوباره خوانده می‌شود تا نظر و میانگین به‌روز شوند.
+      router.refresh();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "ثبت نظر با خطا مواجه شد.");
+      setSubmitting(false);
+    }
+  }
+
+  if (myReview) {
+    return (
+      <section className="rounded-square border border-primary-green/20 bg-card-bg p-5 sm:p-6">
+        <h2 className="text-lg font-bold">نظر شما دربارهٔ {mentorName}</h2>
+        <div className="mt-4 space-y-3 rounded-2xl bg-approve-bg/40 p-4">
+          <RatingStars rating={myReview.rating} />
+          {myReview.text && (
+            <p className="text-sm leading-7 whitespace-pre-wrap wrap-anywhere">{myReview.text}</p>
+          )}
+        </div>
+        <p className="mt-3 text-xs leading-6 text-text-muted">
+          از اینکه تجربه‌تان را به اشتراک گذاشتید متشکریم.
+        </p>
+      </section>
+    );
   }
 
   return (
@@ -44,10 +91,7 @@ export default function MentorReviewForm({ mentorName }: { mentorName: string })
                   value={value}
                   checked={rating === value}
                   required
-                  onChange={() => {
-                    setRating(value);
-                    setPreview(null);
-                  }}
+                  onChange={() => setRating(value)}
                   className="peer sr-only"
                 />
                 <span className="sr-only">{value.toLocaleString("fa-IR")} از ۵؛ {ratingLabels[value]}</span>
@@ -72,36 +116,31 @@ export default function MentorReviewForm({ mentorName }: { mentorName: string })
             id={`${id}-text`}
             rows={4}
             value={text}
-            onChange={(event) => {
-              setText(event.target.value);
-              setPreview(null);
-            }}
+            onChange={(event) => setText(event.target.value)}
+            maxLength={1000}
+            disabled={submitting}
             placeholder="چه چیزی در همراهی با منتورتان برای شما مفید بود؟"
             aria-describedby={`${id}-notice`}
             className="w-full resize-y rounded-2xl border border-white/10 bg-element-bg/40 p-4 text-sm leading-7 placeholder:text-text-muted focus-visible:outline-2 focus-visible:outline-approve"
           />
         </div>
         <p id={`${id}-notice`} className="text-xs leading-6 text-text-muted">
-          فرم فعلاً در حالت پیش‌نمایش است؛ نظر شما ارسال یا منتشر نمی‌شود.
+          نظر شما با نام شما برای همه نمایش داده می‌شود و فقط یک بار قابل ثبت است.
         </p>
+        {error && (
+          <p role="alert" className="text-xs leading-6 text-danger">
+            {error}
+          </p>
+        )}
         <button
           type="submit"
-          className="w-full cursor-pointer rounded-2xl bg-primary-green px-5 py-3 text-sm font-bold text-black hover:bg-primary-green-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-approve motion-safe:transition-colors"
+          disabled={rating === null || submitting}
+          className="w-full cursor-pointer rounded-2xl bg-primary-green px-5 py-3 text-sm font-bold text-black hover:bg-primary-green-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-approve disabled:cursor-not-allowed disabled:opacity-50 motion-safe:transition-colors"
         >
-          پیش‌نمایش نظر و امتیاز
+          {submitting ? "در حال ثبت..." : "ثبت نظر و امتیاز"}
         </button>
       </form>
 
-      {preview && (
-        <div
-          role="status"
-          className="mt-5 space-y-3 rounded-2xl border border-dashed border-approve/40 bg-approve-bg/40 p-4"
-        >
-          <h3 className="text-sm font-bold text-approve">پیش‌نمایش نظر شما — ارسال نشده</h3>
-          <RatingStars rating={preview.rating} />
-          {preview.text && <p className="text-sm leading-7 whitespace-pre-wrap wrap-anywhere">{preview.text}</p>}
-        </div>
-      )}
     </section>
   );
 }

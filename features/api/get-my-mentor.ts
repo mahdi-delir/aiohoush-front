@@ -1,8 +1,17 @@
 import "server-only";
-import { mockMyMentor } from "@/mocks/mentor";
+
+import { fetchDjango } from "@/lib/django";
+import type { ApiResponse } from "@/types/api";
 import type { MyMentorData } from "@/types/mentor";
-import { ApiResponse } from "@/types/api";
 
 export async function getMyMentor(): Promise<ApiResponse<MyMentorData>> {
-  return mockMyMentor;
+  const response = await fetchDjango("/auth/my-mentor/", {
+    method: "GET",
+  });
+
+  if (!response.ok) {
+    throw new Error("دریافت اطلاعات منتور با خطا مواجه شد.");
+  }
+
+  return (await response.json()) as ApiResponse<MyMentorData>;
 }

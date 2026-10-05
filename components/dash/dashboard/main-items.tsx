@@ -33,6 +33,11 @@ interface DashboardMenuItem {
   permission?: string;
 
   /*
+   * نمایش برای اعضای یک گروه (مثلاً «دانشجویان»).
+   */
+  group?: string;
+
+  /*
    * فقط برای آیتم‌هایی که عمداً
    * برای همه کاربران لاگین‌شده هستند.
    */
@@ -128,7 +133,7 @@ const menuItems: DashboardMenuItem[] = [
     href: "/my-mentor",
     icon: Support,
 
-    // بعداً با permission واقعی Mentor.
+    group: "دانشجویان",
     enabled: true,
 
     order: 7,
@@ -149,7 +154,7 @@ const menuItems: DashboardMenuItem[] = [
 export default function MainItems() {
   const { isPending, isError } = useCurrentUser();
 
-  const { hasPermission } = useAuthorization();
+  const { hasPermission, isInGroup } = useAuthorization();
 
   if (isPending) {
     return <MainItemsSkeleton />;
@@ -174,6 +179,10 @@ export default function MainItems() {
        * authenticated.
        */
       if (item.alwaysVisible) {
+        return true;
+      }
+
+      if (item.group && isInGroup(item.group)) {
         return true;
       }
 
