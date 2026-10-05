@@ -35,6 +35,8 @@ export default function RankedAvatar({
     >
       {src && !failed ? (
         <Image
+          // عکس از دامنهٔ API می‌آید و در remotePatterns نیست.
+          unoptimized
           src={src}
           alt={`عکس ${name}`}
           fill

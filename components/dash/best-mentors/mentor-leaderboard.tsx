@@ -3,6 +3,7 @@ import { formatMentorRating, getTopTenMentors } from "@/lib/mentor-leaderboard";
 import MentorPodium from "./mentor-podium";
 import MentorProfileDialog from "./mentor-profile-dialog";
 import RankedAvatar from "./ranked-avatar";
+import RatingLine from "./rating-line";
 import RankMovement from "./rank-movement";
 import { RatingIcon, TrophyIcon } from "./leaderboard-icons";
 
@@ -118,17 +119,16 @@ export default function MentorLeaderboard({ data }: { data: LeaderboardData }) {
                         <RankedAvatar key={mentor.avatarUrl ?? mentor.id} src={mentor.avatarUrl} name={mentor.name} />
                         <div className="min-w-0 flex-1">
                           <h3 className="text-sm font-bold wrap-anywhere sm:text-base">{mentor.name}</h3>
-                          <p className="mt-1 text-xs leading-5 text-text-muted">{mentor.specialty}</p>
+                          {mentor.specialty && (
+                            <p className="mt-1 text-xs leading-5 text-text-muted">{mentor.specialty}</p>
+                          )}
+                          <RatingLine mentor={mentor} />
                         </div>
                         <div className="shrink-0 text-end">
-                          <span
-                            aria-label={`امتیاز ${formatMentorRating(mentor.rating)} از ۵`}
-                            className="flex items-center justify-end gap-1 text-sm font-bold sm:text-base"
-                          >
-                            <RatingIcon />
-                            {formatMentorRating(mentor.rating)}
+                          <span className="block text-base font-bold tabular-nums text-approve sm:text-lg">
+                            {mentor.points.toLocaleString("fa-IR")}
                           </span>
-                          <p className="mt-1 text-xs text-text-muted">{mentor.reviewCount.toLocaleString("fa-IR")} امتیاز</p>
+                          <span className="mt-0.5 block text-xs text-text-muted">امتیاز</span>
                         </div>
                       </div>
                       <div className="mt-3 flex items-center justify-between gap-3 border-t border-white/5 pt-1">

@@ -8,14 +8,20 @@ export const metadata: Metadata = {
 };
 
 export default async function BestMentorsPage() {
-  const res = await getMentorLeaderboard();
-  const data = res?.data ?? {
-    periodLabel: "",
-    comparisonLabel: "",
-    updatedAt: "",
-    rankingDescription: "",
-    mentors: [],
-  };
+  const [result] = await Promise.allSettled([getMentorLeaderboard()]);
+
+  const data =
+    result.status === "fulfilled" && result.value?.success
+      ? result.value.data
+      : null;
+
+  if (!data) {
+    return (
+      <p role="status" className="rounded-square bg-card-bg p-6 text-sm leading-7 text-text-muted">
+        دریافت رتبه‌بندی منتورها ممکن نشد؛ لطفاً صفحه را دوباره بارگذاری کنید.
+      </p>
+    );
+  }
 
   return <MentorLeaderboard data={data} />;
 }

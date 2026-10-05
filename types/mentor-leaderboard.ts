@@ -6,6 +6,9 @@ export interface RankedMentor {
   specialty: string;
   bio: string;
   avatarUrl: string | null;
+  /** امتیاز فروش در دورهٔ جاری (مبنای رتبه) */
+  points: number;
+  /** میانگین امتیاز ستاره‌ای دانش‌آموزان */
   rating: number | null;
   reviewCount: number;
 }

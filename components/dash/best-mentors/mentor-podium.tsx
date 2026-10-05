@@ -1,6 +1,7 @@
 import type { RankedMentor } from "@/types/mentor-leaderboard";
 import { formatMentorRating } from "@/lib/mentor-leaderboard";
 import RankedAvatar from "./ranked-avatar";
+import RatingLine from "./rating-line";
 import MentorProfileDialog from "./mentor-profile-dialog";
 import RankMovement from "./rank-movement";
 import { RatingIcon, TrophyIcon } from "./leaderboard-icons";
@@ -72,15 +73,12 @@ export default function MentorPodium({
                 </div>
                 <p className="mb-2 text-xs text-text-muted">جایگاه {style.label}</p>
                 <h3 className="text-sm leading-6 font-bold wrap-anywhere sm:text-base">{mentor.name}</h3>
-                <p className="mt-1 min-h-10 text-xs leading-5 text-text-muted">{mentor.specialty}</p>
-                <div
-                  aria-label={`امتیاز ${formatMentorRating(mentor.rating)} از ۵`}
-                  className="mt-3 flex items-center justify-center gap-1.5 text-lg font-bold"
-                >
-                  <RatingIcon />
-                  {formatMentorRating(mentor.rating)}
+                <p className="mt-1 min-h-5 text-xs leading-5 text-text-muted">{mentor.specialty}</p>
+                <div className="mt-3 text-lg font-bold tabular-nums text-approve">
+                  {mentor.points.toLocaleString("fa-IR")}
+                  <span className="ms-1 text-xs font-normal text-text-muted">امتیاز</span>
                 </div>
-                <p className="mt-1 text-xs text-text-muted">{mentor.reviewCount.toLocaleString("fa-IR")} امتیاز</p>
+                <RatingLine mentor={mentor} className="justify-center" />
                 {showMovement && (
                   <div className="mt-3">
                     <RankMovement rank={mentor.rank} previousRank={mentor.previousRank} />

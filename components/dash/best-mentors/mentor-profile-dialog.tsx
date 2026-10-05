@@ -58,19 +58,27 @@ export default function MentorProfileDialog({
         <h2 id={headingId} className="mt-6 text-2xl font-bold">
           {mentor.name}
         </h2>
-        <p className="mt-2 text-sm text-approve">{mentor.specialty}</p>
+        {mentor.specialty && (
+          <p className="mt-2 text-sm text-approve">{mentor.specialty}</p>
+        )}
         <p className="mt-5 text-sm leading-8 whitespace-pre-wrap wrap-anywhere text-text-muted">
           {mentor.bio.trim() || "بیوگرافی این منتور هنوز تکمیل نشده است."}
         </p>
-        <dl className="mt-6 grid grid-cols-2 gap-3 border-t border-white/10 pt-5">
+        <dl className="mt-6 grid grid-cols-3 gap-3 border-t border-white/10 pt-5">
           <div>
-            <dt className="text-xs text-text-muted">امتیاز دانش‌آموزان</dt>
+            <dt className="text-xs text-text-muted">امتیاز این دوره</dt>
+            <dd className="mt-2 font-bold tabular-nums text-approve">
+              {mentor.points.toLocaleString("fa-IR")}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-xs text-text-muted">نظر دانش‌آموزان</dt>
             <dd className="mt-2 font-bold text-amber-300">
               {formatMentorRating(mentor.rating)} از ۵
             </dd>
           </div>
           <div>
-            <dt className="text-xs text-text-muted">تعداد امتیازها</dt>
+            <dt className="text-xs text-text-muted">تعداد نظرها</dt>
             <dd className="mt-2 font-bold">
               {mentor.reviewCount.toLocaleString("fa-IR")}
             </dd>

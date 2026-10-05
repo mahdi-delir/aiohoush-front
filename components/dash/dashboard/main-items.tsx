@@ -144,8 +144,8 @@ const menuItems: DashboardMenuItem[] = [
     href: "/best-seller",
     icon: Apply,
 
-    // بعداً با permission واقعی ranking.
-    enabled: false,
+    alwaysVisible: true,
+    enabled: true,
 
     order: 8,
   },
