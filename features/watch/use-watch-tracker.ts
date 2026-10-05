@@ -110,7 +110,9 @@ export function useWatchTracker(
       segmentStart = now;
     }
 
-    function applyResume(resumeMs: number) {
+    // arrow function (نه function declaration) تا TypeScript بررسی
+    // null بودن video در ابتدای effect را اینجا هم معتبر بداند.
+    const applyResume = (resumeMs: number) => {
       const duration = durationMs();
 
       if (
@@ -120,7 +122,7 @@ export function useWatchTracker(
       ) {
         video.currentTime = resumeMs / 1000;
       }
-    }
+    };
 
     function ensureWatch(): Promise<string | null> {
       if (watchId) return Promise.resolve(watchId);
