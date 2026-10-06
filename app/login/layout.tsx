@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
   },
   icons: {
-    apple: "/pwa-icon/180",
+    apple: "/pwa/apple-icon-180.png",
   },
 };
 
