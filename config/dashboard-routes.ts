@@ -31,7 +31,10 @@ export const dashboardRoutes = {
     },
     "projects/new": {
         title: 'ثبت پروژه'
-    }
+    },
+    notifications: {
+        title: 'اعلان‌ها'
+    },
 } as const;
 
 export type DashboardRoute = keyof typeof dashboardRoutes;

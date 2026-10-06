@@ -7,12 +7,12 @@ import {
   type DashboardRoute,
 } from "@/config/dashboard-routes";
 import Menu from "@/assets/puffy-icons/menu.svg";
-import Bell from "@/assets/puffy-icons/bell.svg";
 import Left from "@/assets/puffy-icons/left.svg";
 import { useRouter } from "next/navigation";
 import { Modal } from "../ui/modal";
 import { useState } from "react";
 import MenuItems from "./menu-item";
+import NotificationBell from "./notifications/notification-bell";
 
 export default function DashboardHeader() {
   const pathname = usePathname();
@@ -63,7 +63,7 @@ export default function DashboardHeader() {
             className="hover:cursor-pointer"
           />
         )}
-        <Image src={Bell} alt="notification-icon" width={28} height={28} />
+        <NotificationBell />
         {/* {isHomeRoute && (
           <Image src={Search} alt="search-icon" width={28} height={28} />
         )} */}
