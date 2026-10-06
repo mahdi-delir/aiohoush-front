@@ -10,6 +10,19 @@ const nextConfig: NextConfig = {
      */
     cpus: 2,
   },
+  // service worker نوتیفیکیشن (public/sw.js) — طبق راهنمای PWA در مستندات Next.js
+  async headers() {
+    return [
+      {
+        source: "/sw.js",
+        headers: [
+          { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+          { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self'" },
+        ],
+      },
+    ];
+  },
   allowedDevOrigins: [
     "192.168.1.*",
   ],

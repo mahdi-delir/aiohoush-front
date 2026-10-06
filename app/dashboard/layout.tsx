@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import ClarityProvider from "@/components/clarity-provider";
 import DashboardHeader from "../../components/dash/header";
+import PushBridge from "@/components/pwa/push-bridge";
 import ProfileReminder from "@/components/dash/profile-reminder";
 import type { Metadata } from "next";
 import { appleStartupImages } from "@/config/splash";
@@ -164,6 +165,7 @@ export default async function DashboardLayout({
         <ClarityProvider />
 
         <DashboardHeader />
+        <PushBridge />
 
         <ProfileReminder />
 
