@@ -5,7 +5,12 @@ import Link from "next/link";
 import Image from "next/image";
 import TicketIcon from "@/assets/puffy-icons/ticket.svg";
 import { shortVersion, useRunningVersion } from "@/components/pwa/running-version";
-export default function MenuItems() {
+export default function MenuItems({
+  onNavigate,
+}: {
+  /** با انتخاب هر گزینه منو بسته شود. */
+  onNavigate?: () => void;
+}) {
   const { data: me } = useCurrentUser();
   const logoutMutation = useLogout();
   const runningVersion = useRunningVersion();
@@ -20,10 +25,10 @@ export default function MenuItems() {
       </div>
       <ul>
         <li className="p-4 hover:bg-black/30">
-          <Link href="/dashboard/profile">پروفایل من</Link>
+          <Link href="/dashboard/profile" onClick={onNavigate}>پروفایل من</Link>
         </li>
         <li className="p-4 hover:bg-black/30">
-          <Link href="/dashboard/tickets" className="flex items-center gap-2">
+          <Link href="/dashboard/tickets" onClick={onNavigate} className="flex items-center gap-2">
             <Image src={TicketIcon} alt="" width={22} height={22} />
             پشتیبانی
           </Link>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useSelectedLayoutSegments } from "next/navigation";
+import { usePathname, useSelectedLayoutSegments } from "next/navigation";
 import Image from "next/image";
 import {
   dashboardRoutes,
@@ -15,7 +15,12 @@ import { useState } from "react";
 import MenuItems from "./menu-item";
 
 export default function DashboardHeader() {
-  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  // منو فقط برای همان صفحه‌ای که در آن باز شده باز می‌ماند؛ با رفتن به
+  // صفحهٔ دیگر (از هر راهی) خودش بسته می‌شود.
+  const [openOnPath, setOpenOnPath] = useState<string | null>(null);
+  const open = openOnPath === pathname;
+  const setOpen = (value: boolean) => setOpenOnPath(value ? pathname : null);
   const segments = useSelectedLayoutSegments();
   const routeKey = segments.join("/");
   const router = useRouter();
@@ -29,7 +34,8 @@ export default function DashboardHeader() {
   const isHomeRoute = segments.length === 0;
 
   return (
-    <header className="flex justify-between items-center">
+    // نام view-transition: هدر هنگام جابه‌جایی صفحه‌ها ثابت می‌ماند (globals.css)
+    <header className="flex justify-between items-center" style={{ viewTransitionName: "site-header" }}>
       <div className="flex items-center gap-4">
         <Image src="/logo.svg" width={28} height={28} alt="aiohoush-logo" />
         <span className="text-white">{currentRoute.title}</span>
@@ -63,7 +69,7 @@ export default function DashboardHeader() {
         )} */}
       </div>
       <Modal
-        children={<MenuItems />}
+        children={<MenuItems onNavigate={() => setOpen(false)} />}
         open={open}
         onClose={() => setOpen(false)}
         className="rounded-bl-none rounded-tl-none max-w-2/3 h-full bg-element-bg"

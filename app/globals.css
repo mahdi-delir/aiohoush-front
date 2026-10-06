@@ -81,3 +81,72 @@ html[data-splash="off"] #app-splash {
     transform: none;
   }
 }
+
+/* ------------------------------------------------------------------
+ * انیمیشن جابه‌جایی صفحه‌ها (React ViewTransition — app/dashboard/template.tsx)
+ * الگوی راهنمای رسمی Next.js: خروج سریع، ورود نرم‌تر و با کمی تأخیر.
+ * ------------------------------------------------------------------ */
+:root {
+  --page-exit: 150ms;
+  --page-enter: 220ms;
+  --page-move: 380ms;
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-old(.page-exit) {
+  animation:
+    var(--page-exit) ease-in both page-fade reverse,
+    var(--page-exit) ease-in both page-rise reverse;
+}
+
+::view-transition-new(.page-enter) {
+  animation:
+    var(--page-enter) ease-out var(--page-exit) both page-fade,
+    var(--page-move) var(--ease-out-soft) both page-rise;
+}
+
+@keyframes page-fade {
+  from {
+    opacity: 0;
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes page-rise {
+  from {
+    transform: translateY(12px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* هدر ثابت می‌ماند؛ فقط محتوا جابه‌جا می‌شود. */
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+/* کلیک‌ها در طول انیمیشن گم نشوند. */
+::view-transition {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
