@@ -4,9 +4,11 @@ import { useLogout } from "@/features/auth/hooks/use-logout";
 import Link from "next/link";
 import Image from "next/image";
 import TicketIcon from "@/assets/puffy-icons/ticket.svg";
+import { shortVersion, useRunningVersion } from "@/components/pwa/running-version";
 export default function MenuItems() {
   const { data: me } = useCurrentUser();
   const logoutMutation = useLogout();
+  const runningVersion = useRunningVersion();
   const user = me?.user;
   return (
     <div className="w-full">
@@ -43,7 +45,14 @@ export default function MenuItems() {
           </Button>
         </li>{" "}
       </ul>
-      <p className="text-center text-text-muted">نسخه نرم‌افزار - 1.0.0</p>
+      <p className="text-center text-text-muted">
+        نسخه نرم‌افزار - 1.0.0
+        {runningVersion && (
+          <bdi dir="ltr" className="ms-1 font-mono text-xs">
+            ({shortVersion(runningVersion)})
+          </bdi>
+        )}
+      </p>
     </div>
   );
 }

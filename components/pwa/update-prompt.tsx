@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from "react";
 
+import { setRunningVersion } from "./running-version";
+
+// پارامتر آدرس برای دور زدن کش هنگام به‌روزرسانی؛ بعد از بارگذاری پاک می‌شود.
+const RELOAD_PARAM = "_v";
+
 // هر چند وقت یک‌بار، و هر بار که اپ دوباره جلوی چشم کاربر می‌آید، چک می‌شود.
 const CHECK_INTERVAL_MS = 10 * 60 * 1000;
 
@@ -15,13 +20,20 @@ const CHECK_INTERVAL_MS = 10 * 60 * 1000;
  * جدا) اجرا می‌شود و مقدار ثابت‌شده با BUILD_ID یکی نمی‌ماند.
  */
 export default function UpdatePrompt() {
-  const [available, setAvailable] = useState(false);
+  const [available, setAvailable] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState(false);
   const [reloading, setReloading] = useState(false);
 
   useEffect(() => {
     // در حالت توسعه هر تغییر کد خودش صفحه را تازه می‌کند.
     if (process.env.NODE_ENV !== "production") return;
+
+    // آدرس بعد از به‌روزرسانی را تمیز کن (بدون بارگذاری دوباره).
+    const url = new URL(window.location.href);
+    if (url.searchParams.has(RELOAD_PARAM)) {
+      url.searchParams.delete(RELOAD_PARAM);
+      window.history.replaceState(window.history.state, "", url);
+    }
 
     let stopped = false;
     let baseline: string | null = null;
@@ -39,8 +51,9 @@ export default function UpdatePrompt() {
         if (baseline === null) {
           // اولین پاسخ بعد از بارگذاری = نسخه‌ای که همین الان اجرا می‌شود.
           baseline = body.version;
+          setRunningVersion(baseline);
         } else if (body.version !== baseline) {
-          setAvailable(true);
+          setAvailable(body.version);
         }
       } catch {
         // بی‌اینترنت یا خطای موقت؛ دفعهٔ بعد دوباره چک می‌شود.
@@ -89,7 +102,11 @@ export default function UpdatePrompt() {
         disabled={reloading}
         onClick={() => {
           setReloading(true);
-          window.location.reload();
+          // آدرس تازه به‌جای reload() تا هیچ کشی (مرورگر، پروکسی، CDN)
+          // صفحهٔ قدیمی را برنگرداند.
+          const url = new URL(window.location.href);
+          url.searchParams.set(RELOAD_PARAM, available);
+          window.location.replace(url);
         }}
         className="rounded-xl bg-primary-green px-4 py-2 text-sm font-bold text-black hover:bg-primary-green-hover disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-green"
       >
