@@ -3,6 +3,7 @@ import "./globals.css";
 
 import { QueryProvider } from "@/providers/query-provider";
 import InstallPrompt from "@/components/pwa/install-prompt";
+import UpdatePrompt from "@/components/pwa/update-prompt";
 import { darbare } from "@/lib/utils";
 
 
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <QueryProvider>{children}
 
           <InstallPrompt />
+          <UpdatePrompt />
         </QueryProvider>
       </body>
     </html>
