@@ -6,7 +6,6 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { unreadCountQueryKey } from "@/features/announcements/use-unread-count";
 import type { AnnouncementInbox, AnnouncementItem } from "@/types/announcement";
-import PushSetup from "./push-setup";
 
 const focusClasses =
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-green";
@@ -206,8 +205,6 @@ export default function NotificationList() {
           </button>
         )}
       </section>
-
-      <PushSetup />
 
       {error && !data ? (
         <p role="alert" className="rounded-square bg-card-bg p-6 text-sm text-text-muted">{error}</p>
