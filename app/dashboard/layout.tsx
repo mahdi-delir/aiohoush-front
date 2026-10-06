@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import ClarityProvider from "@/components/clarity-provider";
 import DashboardHeader from "../../components/dash/header";
+import ProfileReminder from "@/components/dash/profile-reminder";
 import type { Metadata } from "next";
 
 import { getCurrentUser } from "@/lib/auth/current-user";
@@ -157,6 +158,8 @@ export default async function DashboardLayout({
         <ClarityProvider />
 
         <DashboardHeader />
+
+        <ProfileReminder />
 
         <div className="px-2">{children}</div>
       </main>

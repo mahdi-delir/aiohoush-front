@@ -22,6 +22,15 @@ export const dashboardRoutes = {
     },
     "tickets/new": {
         title: 'تیکت جدید'
+    },
+    projects: {
+        title: 'پروژه‌ها'
+    },
+    "projects/mine": {
+        title: 'پروژه‌های من'
+    },
+    "projects/new": {
+        title: 'ثبت پروژه'
     }
 } as const;
 

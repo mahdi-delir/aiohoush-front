@@ -8,7 +8,7 @@ import Button from "./button";
 import { VideoItem } from "@/types/video";
 import FileUpload from "./file-upload";
 import { UploadTarget } from "@/lib/upload-files";
-import { useWatchTracker } from "@/features/watch/use-watch-tracker";
+import { useWatchTracker, type WatchTarget } from "@/features/watch/use-watch-tracker";
 
 interface VideoPlayerProps extends Omit<
   VideoHTMLAttributes<HTMLVideoElement>,
@@ -16,9 +16,11 @@ interface VideoPlayerProps extends Omit<
 > {
   item: VideoItem;
   homeworkUpload?: UploadTarget;
-  /** شناسهٔ جلسهٔ دوره برای ثبت پیشرفت تماشا؛ برای ویدئوهای هدیه خالی. */
+  /** شناسهٔ جلسهٔ دوره برای ثبت پیشرفت تماشا. */
   trackSessionId?: number;
-  /** وقتی جلسه تکمیل شد یا نوبت تماشا تمام شد. */
+  /** شناسهٔ ویدئوی هدیه برای ثبت پیشرفت تماشا. */
+  trackGiftId?: number;
+  /** وقتی ویدئو تکمیل شد یا نوبت تماشا تمام شد. */
   onWatchProgress?: () => void;
 }
 
@@ -27,6 +29,7 @@ export function Video({
   className,
   homeworkUpload,
   trackSessionId,
+  trackGiftId,
   onWatchProgress,
   ...videoProps
 }: VideoPlayerProps) {
@@ -37,11 +40,15 @@ export function Video({
 
   const isLocked = item.is_locked === true;
 
-  useWatchTracker(
-    videoRef,
-    isLocked ? undefined : trackSessionId,
-    onWatchProgress,
-  );
+  const watchTarget: WatchTarget | undefined = isLocked
+    ? undefined
+    : trackSessionId
+      ? { kind: "session", id: trackSessionId }
+      : trackGiftId
+        ? { kind: "gift", id: trackGiftId }
+        : undefined;
+
+  useWatchTracker(videoRef, watchTarget, onWatchProgress);
 
   async function handleSourceDownload() {
     setDownloadError(null);

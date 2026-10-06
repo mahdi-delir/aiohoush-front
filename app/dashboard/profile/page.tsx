@@ -4,6 +4,8 @@ import Input from "@/components/ui/text-input";
 import { normalizeDigits } from "@/lib/auth-input";
 import Button from "@/components/ui/button";
 import StatusBar from "@/components/ui/status-bar";
+import { useQueryClient } from "@tanstack/react-query";
+import { currentUserQueryKey } from "@/features/auth/queries/current-user";
 
 type Profile = {
   id: number;
@@ -29,6 +31,7 @@ function errorText(data: unknown) {
 }
 
 export default function ProfilePage() {
+  const queryClient = useQueryClient();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [pictures, setPictures] = useState<Picture[]>([]);
   const [busy, setBusy] = useState(false);
@@ -80,9 +83,14 @@ export default function ProfilePage() {
       }),
     });
     const data = await response.json();
-    response.ok && data?.success !== false
-      ? (setProfile(data), setMessage("پروفایل ذخیره شد."))
-      : setError(errorText(data));
+    if (response.ok && data?.success !== false) {
+      setProfile(data);
+      setMessage("پروفایل ذخیره شد.");
+      // تا بنر «تکمیل پروفایل» بلافاصله به‌روز شود.
+      void queryClient.invalidateQueries({ queryKey: currentUserQueryKey });
+    } else {
+      setError(errorText(data));
+    }
     setBusy(false);
   }
 

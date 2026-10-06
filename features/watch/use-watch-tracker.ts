@@ -3,7 +3,7 @@
 import { useEffect, type RefObject } from "react";
 
 /*
- * ردیابی تماشای ویدئوی جلسه.
+ * ردیابی تماشای ویدئوی جلسه یا ویدئوی هدیه.
  *
  * - روی اولین play یک «نوبت تماشا» در سرور ساخته می‌شود و اگر کاربر
  *   قبلاً بخشی از ویدئو را دیده باشد، از همان‌جا ادامه می‌دهد.
@@ -54,15 +54,40 @@ const MAX_CONTINUOUS_JUMP_MS = 4_000;
 const MIN_RESUME_MS = 5_000;
 const RESUME_END_MARGIN_MS = 10_000;
 
+/**
+ * چه ویدئویی ردیابی شود: جلسهٔ دوره یا ویدئوی هدیه.
+ * هر دو سمت سرور یک قالب دارند (شروع → watch_id، سپس batch رویدادها).
+ */
+export type WatchTarget =
+  | { kind: "session"; id: number }
+  | { kind: "gift"; id: number };
+
+function watchUrls(target: WatchTarget) {
+  return target.kind === "gift"
+    ? {
+        start: `/api/gift-videos/${target.id}/watch`,
+        events: (watchId: string) => `/api/gift-watches/${watchId}/events`,
+      }
+    : {
+        start: `/api/course-sessions/${target.id}/watch`,
+        events: (watchId: string) => `/api/course-watches/${watchId}/events`,
+      };
+}
+
 export function useWatchTracker(
   videoRef: RefObject<HTMLVideoElement | null>,
-  sessionId: number | undefined,
+  target: WatchTarget | undefined,
   onProgress?: () => void,
 ) {
+  // کلید پایدار؛ با هر رندر شیء جدید ساخته می‌شود ولی ردیابی نباید از نو شروع شود.
+  const targetKey = target ? `${target.kind}:${target.id}` : null;
+
   useEffect(() => {
     const video = videoRef.current;
 
-    if (!video || !sessionId) return;
+    if (!video || !target) return;
+
+    const urls = watchUrls(target);
 
     let watchId: string | null = null;
     let starting: Promise<string | null> | null = null;
@@ -128,7 +153,7 @@ export function useWatchTracker(
       if (watchId) return Promise.resolve(watchId);
 
       if (!starting) {
-        starting = fetch(`/api/course-sessions/${sessionId}/watch`, {
+        starting = fetch(urls.start, {
           method: "POST",
           credentials: "same-origin",
         })
@@ -175,7 +200,7 @@ export function useWatchTracker(
       if (endReason) watchId = null;
 
       try {
-        const response = await fetch(`/api/course-watches/${id}/events`, {
+        const response = await fetch(urls.events(id), {
           method: "POST",
           credentials: "same-origin",
           headers: { "Content-Type": "application/json" },
@@ -217,7 +242,7 @@ export function useWatchTracker(
 
       if (endReason) watchId = null;
 
-      fetch(`/api/course-watches/${id}/events`, {
+      fetch(urls.events(id), {
         method: "POST",
         credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
@@ -342,7 +367,8 @@ export function useWatchTracker(
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("pagehide", onPageHide);
     };
-    // onProgress عمداً در وابستگی‌ها نیست تا با هر رندر ردیابی از نو شروع نشود.
+    // onProgress و target عمداً در وابستگی‌ها نیستند؛ targetKey همان target
+    // است و با هر رندر عوض نمی‌شود.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [videoRef, sessionId]);
+  }, [videoRef, targetKey]);
 }

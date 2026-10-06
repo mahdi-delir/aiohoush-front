@@ -1,0 +1,23 @@
+import { invalidIdResponse, rejectUntrustedOrigin } from "@/lib/bff";
+import { fetchDjango } from "@/lib/django";
+import { forwardDjangoResponse } from "@/lib/django-public";
+
+export const runtime = "nodejs";
+
+// افزودن یک عکس به پروژه (multipart، فیلد «image»)
+export async function POST(
+  request: Request,
+  context: { params: Promise<{ id: string }> },
+) {
+  const rejected = rejectUntrustedOrigin(request);
+  if (rejected) return rejected;
+
+  const { id } = await context.params;
+  if (!/^\d+$/.test(id)) return invalidIdResponse();
+
+  const formData = await request.formData();
+
+  return forwardDjangoResponse(
+    await fetchDjango(`/project/${id}/images/`, { method: "POST", body: formData }),
+  );
+}

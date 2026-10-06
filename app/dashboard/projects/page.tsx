@@ -1,21 +1,12 @@
 import type { Metadata } from "next";
 import ProjectGallery from "@/components/dash/projects/project-gallery";
-import { getPublicProjects } from "@/features/api/get-public-projects";
 
 export const metadata: Metadata = {
   title: "پروژه‌ها | آیوهوش",
-  description:
-    "پروژه‌های آیوهوش و دانشجویان؛ معرفی سازندگان و دسترسی به فایل‌ها و مخزن پروژه‌ها.",
+  description: "پروژه‌های آیوهوش و دانشجویان؛ توضیحات و تصاویر هر پروژه.",
+  robots: { index: false, follow: false },
 };
 
-export default async function ProjectsPage() {
-  const response = await getPublicProjects();
-
-  if (!response.data) {
-    throw new Error(
-      response.message || "دریافت پروژه‌ها با خطا مواجه شد."
-    );
-  }
-
-  return <ProjectGallery data={response.data} />;
+export default function ProjectsPage() {
+  return <ProjectGallery />;
 }

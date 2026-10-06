@@ -82,7 +82,7 @@ const menuItems: DashboardMenuItem[] = [
     href: "/projects",
     icon: Code,
 
-    // هنوز permission واقعی Project نداریم.
+    // گالری پروژه‌ها برای همهٔ کاربران واردشده است.
     enabled: true,
     alwaysVisible: true,
 

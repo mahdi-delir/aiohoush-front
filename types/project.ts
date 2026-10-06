@@ -1,24 +1,79 @@
-export type ProjectCategory = "aiohoush" | "students";
+export type ProjectKind = "aiohoush" | "student";
 
-export interface PublicStudentProfile {
-  id: number;
-  name: string;
-  bio: string;
-}
+export type ProjectStatus = "pending" | "approved" | "rejected";
 
-export interface PublicProject {
+export interface ProjectTechnology {
   id: number;
   title: string;
-  description: string;
+}
+
+export interface ProjectCourse {
+  id: number;
+  title: string;
+}
+
+export interface ProjectCard {
+  id: number;
+  kind: ProjectKind;
+  title: string;
+  summary: string;
+  cover: string | null;
+  imageCount: number;
   technologies: string[];
-  category: ProjectCategory;
-  studentId: number | null;
-  artwork: "workspace" | "analytics" | "learning" | "portfolio";
-  githubUrl: string | null;
-  files: { id: string; name: string; url: string; sizeLabel: string }[];
+  course: ProjectCourse | null;
+  author: { name: string } | null;
 }
 
 export interface ProjectGalleryData {
-  projects: PublicProject[];
-  students: PublicStudentProfile[];
+  projects: ProjectCard[];
+  counts: Record<ProjectKind, number>;
+  total: number;
+  page: number;
+  pageCount: number;
+  technologies: ProjectTechnology[];
+}
+
+export interface ProjectFileItem {
+  id: number;
+  name: string;
+  size: number;
+  url: string;
+}
+
+export interface ProjectDetail extends Omit<ProjectCard, "technologies" | "author"> {
+  description: string;
+  images: { id: number; url: string }[];
+  technologies: ProjectTechnology[];
+  githubUrl: string | null;
+  demoUrl: string | null;
+  isMine: boolean;
+  createdAt: string;
+  /** فقط برای صاحب پروژه، استاد دوره و مدیر؛ بقیه null */
+  files: ProjectFileItem[] | null;
+  author: { name: string; bio: string; avatar: string | null } | null;
+  /** فقط برای صاحب پروژه */
+  status?: ProjectStatus;
+  statusLabel?: string;
+  rejectionReason?: string | null;
+}
+
+export interface MyProject extends ProjectCard {
+  status: ProjectStatus;
+  statusLabel: string;
+  rejectionReason: string | null;
+  updatedAt: string;
+}
+
+export interface ProjectOptions {
+  technologies: ProjectTechnology[];
+  courses: ProjectCourse[];
+}
+
+export interface ProjectFormValues {
+  title: string;
+  description: string;
+  course: number | null;
+  technologies: number[];
+  github_url: string;
+  demo_url: string;
 }

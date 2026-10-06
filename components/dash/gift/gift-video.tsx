@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Video } from "@/components/ui/video";
 import { useGiftVideos } from "@/features/hooks/use-gift-videos";
+import { currentUserQueryKey } from "@/features/auth/queries/current-user";
 import type { GiftVideoItem } from "@/types/gift-video";
 import type { VideoItem } from "@/types/video";
 
@@ -26,6 +28,7 @@ function toVideoItem(
 
 
 export default function GiftVideos() {
+  const queryClient = useQueryClient();
   const {
     data: response,
     isPending,
@@ -83,8 +86,14 @@ export default function GiftVideos() {
   return (
     <section className="flex flex-col gap-4">
       <Video
+        key={selectedVideo.id}
         item={toVideoItem(selectedVideo)}
         poster={selectedVideo.cover ?? undefined}
+        trackGiftId={selectedVideo.id}
+        // تا هیروی صفحهٔ اول («هدیه را دیده») به‌روز شود.
+        onWatchProgress={() =>
+          void queryClient.invalidateQueries({ queryKey: currentUserQueryKey })
+        }
       />
 
       <div className="grid grid-cols-2 gap-4">
