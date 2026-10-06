@@ -4,6 +4,7 @@ import ClarityProvider from "@/components/clarity-provider";
 import DashboardHeader from "../../components/dash/header";
 import ProfileReminder from "@/components/dash/profile-reminder";
 import type { Metadata } from "next";
+import { appleStartupImages } from "@/config/splash";
 
 import { getCurrentUser } from "@/lib/auth/current-user";
 import {
@@ -23,6 +24,7 @@ export const metadata: Metadata = {
     capable: true,
     title: "آیوهوش",
     statusBarStyle: "black-translucent",
+    startupImage: appleStartupImages,
   },
   icons: {
     apple: "/pwa/apple-icon-180.png",

@@ -4,6 +4,8 @@ import "./globals.css";
 import { QueryProvider } from "@/providers/query-provider";
 import InstallPrompt from "@/components/pwa/install-prompt";
 import UpdatePrompt from "@/components/pwa/update-prompt";
+import SplashScreen from "@/components/pwa/splash-screen";
+import { splashGateScript } from "@/components/pwa/splash-gate";
 import { darbare } from "@/lib/utils";
 
 
@@ -18,8 +20,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="fa-IR"
       dir="rtl"
       className={`${darbare.variable}  h-full antialiased`}
+      // data-splash را اسکریپت زیر قبل از hydrate تنظیم می‌کند.
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: splashGateScript }} />
+      </head>
       <body className="min-h-full flex flex-col items-center">
+        <SplashScreen />
         <QueryProvider>{children}
 
           <InstallPrompt />

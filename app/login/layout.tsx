@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { appleStartupImages } from "@/config/splash";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
@@ -7,6 +8,7 @@ export const metadata: Metadata = {
     capable: true,
     title: "آیوهوش",
     statusBarStyle: "black-translucent",
+    startupImage: appleStartupImages,
   },
   icons: {
     apple: "/pwa/apple-icon-180.png",
