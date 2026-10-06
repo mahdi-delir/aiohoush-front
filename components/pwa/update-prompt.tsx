@@ -2,16 +2,17 @@
 
 import { useEffect, useState } from "react";
 
-const CURRENT_VERSION = process.env.NEXT_PUBLIC_APP_VERSION;
-
 // هر چند وقت یک‌بار، و هر بار که اپ دوباره جلوی چشم کاربر می‌آید، چک می‌شود.
 const CHECK_INTERVAL_MS = 10 * 60 * 1000;
-const FIRST_CHECK_DELAY_MS = 5_000;
 
 /**
  * اگر بعد از باز شدن اپ نسخهٔ جدیدی دیپلوی شده باشد، پیام به‌روزرسانی
  * نشان می‌دهد. روی گوشی اپ نصب‌شده معمولاً از پس‌زمینه برمی‌گردد و صفحه
  * دوباره بارگذاری نمی‌شود؛ بدون این پیام کاربر روی نسخهٔ قدیمی می‌ماند.
+ *
+ * نسخهٔ پایه همان نسخه‌ای است که سرور موقع باز شدن اپ گزارش می‌دهد؛ نسخه
+ * در خود کد ثابت نمی‌شود، چون next.config در build چند بار (در پروسه‌های
+ * جدا) اجرا می‌شود و مقدار ثابت‌شده با BUILD_ID یکی نمی‌ماند.
  */
 export default function UpdatePrompt() {
   const [available, setAvailable] = useState(false);
@@ -20,9 +21,10 @@ export default function UpdatePrompt() {
 
   useEffect(() => {
     // در حالت توسعه هر تغییر کد خودش صفحه را تازه می‌کند.
-    if (!CURRENT_VERSION || process.env.NODE_ENV !== "production") return;
+    if (process.env.NODE_ENV !== "production") return;
 
     let stopped = false;
+    let baseline: string | null = null;
 
     async function check() {
       if (stopped || document.visibilityState !== "visible") return;
@@ -32,8 +34,12 @@ export default function UpdatePrompt() {
         if (!response.ok) return;
 
         const body = (await response.json()) as { version?: string | null };
+        if (!body.version || stopped) return;
 
-        if (body.version && body.version !== CURRENT_VERSION) {
+        if (baseline === null) {
+          // اولین پاسخ بعد از بارگذاری = نسخه‌ای که همین الان اجرا می‌شود.
+          baseline = body.version;
+        } else if (body.version !== baseline) {
           setAvailable(true);
         }
       } catch {
@@ -41,7 +47,8 @@ export default function UpdatePrompt() {
       }
     }
 
-    const first = window.setTimeout(check, FIRST_CHECK_DELAY_MS);
+    // نسخهٔ پایه بلافاصله گرفته می‌شود.
+    const first = window.setTimeout(check, 0);
     const interval = window.setInterval(check, CHECK_INTERVAL_MS);
 
     const onVisible = () => {

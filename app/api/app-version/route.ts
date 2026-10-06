@@ -7,22 +7,17 @@ export const dynamic = "force-dynamic";
 let cached: string | null = null;
 
 /*
- * نسخهٔ build فعلی سرور؛ اپ‌های باز با نسخهٔ خودشان مقایسه می‌کنند.
- * از فایل BUILD_ID خوانده می‌شود تا با اجرای دوبارهٔ next.config هنگام
- * next start عوض نشود.
+ * نسخهٔ build فعلی سرور = محتوای .next/BUILD_ID (هر build یک شناسهٔ تازه).
+ * اپ موقع باز شدن این مقدار را به خاطر می‌سپارد و بعداً اگر عوض شده بود،
+ * پیام به‌روزرسانی نشان می‌دهد (components/pwa/update-prompt.tsx).
  */
 async function serverVersion(): Promise<string | null> {
   if (cached) return cached;
 
-  // در next dev ممکن است BUILD_ID قدیمیِ یک build قبلی روی دیسک باشد.
-  if (process.env.NODE_ENV !== "production") {
-    return process.env.NEXT_PUBLIC_APP_VERSION ?? null;
-  }
-
   try {
-    cached = (await readFile(join(process.cwd(), ".next", "BUILD_ID"), "utf8")).trim();
+    cached = (await readFile(join(process.cwd(), ".next", "BUILD_ID"), "utf8")).trim() || null;
   } catch {
-    cached = process.env.NEXT_PUBLIC_APP_VERSION ?? null;
+    cached = null;
   }
 
   return cached;
