@@ -13,6 +13,10 @@ import {
 } from "@tanstack/react-query";
 
 import { currentUserQueryKey } from "@/features/auth/queries/current-user";
+// همهٔ صفحه‌های داشبورد به کاربر واردشده وابسته‌اند؛ هنگام build
+// پیش‌رندر نمی‌شوند.
+// export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   manifest: "/app.webmanifest",
   appleWebApp: {
