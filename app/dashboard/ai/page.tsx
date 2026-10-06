@@ -192,7 +192,7 @@ export default function AIPage() {
             return (
               <article
                 key={product.code}
-                className={`relative overflow-hidden rounded-square border border-white/10 bg-gradient-to-br ${product.color} p-5`}
+                className={`relative overflow-hidden rounded-square border border-white/10 bg-linear-to-br ${product.color} p-5`}
               >
                 <div
                   aria-hidden="true"

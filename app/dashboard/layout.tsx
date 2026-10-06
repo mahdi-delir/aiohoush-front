@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     startupImage: appleStartupImages,
   },
   icons: {
-    apple: "/pwa/apple-icon-180.png",
+    apple: "/pwa/apple-icon-180.e73233ca.png",
   },
 };
 export default async function DashboardLayout({
