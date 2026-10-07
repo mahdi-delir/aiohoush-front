@@ -8,12 +8,6 @@ import LiquidBg from "@/components/ui/liquid-bg";
 import StatusBar from "@/components/ui/status-bar";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 
-/*
- * عکس‌های هیرو برای دو حالت «بدون دوره».
- * هر وقت عکس آماده شد، import کنید و اینجا بگذارید (مثلاً
- * import GiftHero from "@/assets/hero/gift.png")؛ با null همان طرح متنی
- * نمایش داده می‌شود.
- */
 const HERO_IMAGES: {
   giftNotWatched: StaticImageData | null;
   noActiveCourse: StaticImageData | null;
@@ -85,7 +79,6 @@ export default function Hero() {
   }
 
   const userData = me.user_data;
-  // اولین دورهٔ نیمه‌تمام به ترتیب نمایش دوره‌ها
   const course = userData?.has_course ? userData.active_courses?.[0] : undefined;
 
   return (

@@ -58,8 +58,6 @@ interface Upload {
 let keySeed = 0;
 const nextKey = () => `k${++keySeed}`;
 
-// --- فیلدهای متنی ------------------------------------------------------------
-
 function FieldsSection({
   values,
   options,
@@ -191,8 +189,6 @@ function FieldsSection({
   );
 }
 
-// --- انتخاب فایل --------------------------------------------------------------
-
 function FilePicker({
   label,
   accept,
@@ -292,7 +288,6 @@ function appendFields(formData: FormData, values: ProjectFormValues) {
   formData.append("demo_url", values.demo_url.trim());
 }
 
-/** zipها یکی‌یکی آپلود می‌شوند؛ خروجی: تعداد ناموفق‌ها */
 async function uploadZips(
   projectId: number,
   files: File[],
@@ -328,8 +323,6 @@ async function uploadZips(
   return failed;
 }
 
-// --- ثبت پروژهٔ جدید ------------------------------------------------------------
-
 export function NewProjectForm() {
   const router = useRouter();
   const { options, error: optionsError } = useOptions();
@@ -342,7 +335,6 @@ export function NewProjectForm() {
   const [submitting, setSubmitting] = useState(false);
   const [createdId, setCreatedId] = useState<number | null>(null);
 
-  // آزادسازی پیش‌نمایش‌ها هنگام ترک صفحه
   const imagesRef = useRef(images);
   useEffect(() => {
     imagesRef.current = images;
@@ -510,8 +502,6 @@ export function NewProjectForm() {
     </form>
   );
 }
-
-// --- ویرایش پروژه ----------------------------------------------------------------
 
 export function EditProjectForm({ projectId }: { projectId: string }) {
   const { options, error: optionsError } = useOptions();
@@ -681,7 +671,6 @@ export function EditProjectForm({ projectId }: { projectId: string }) {
     return <p role="status" className="p-6 text-sm text-text-muted">در حال دریافت پروژه…</p>;
   }
 
-  // اگر دورهٔ فعلی پروژه دیگر در لیست نیست، گزینه‌اش حفظ شود.
   const courseOptions =
     project.course && !options.courses.some((course) => course.id === project.course?.id)
       ? { ...options, courses: [project.course, ...options.courses] }

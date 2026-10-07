@@ -1,10 +1,9 @@
 import type { RankedMentor } from "@/types/mentor-leaderboard";
-import { formatMentorRating } from "@/lib/mentor-leaderboard";
 import RankedAvatar from "./ranked-avatar";
 import RatingLine from "./rating-line";
 import MentorProfileDialog from "./mentor-profile-dialog";
 import RankMovement from "./rank-movement";
-import { RatingIcon, TrophyIcon } from "./leaderboard-icons";
+import { TrophyIcon } from "./leaderboard-icons";
 
 const podiumStyles = {
   1: {

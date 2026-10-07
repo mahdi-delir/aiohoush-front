@@ -30,9 +30,6 @@ export async function POST(
     const sessionId =
       await getSessionId()
 
-    /*
-     * Logout را idempotent نگه می‌داریم.
-     */
     if (!sessionId) {
       await clearSessionCookie()
 
@@ -52,10 +49,6 @@ export async function POST(
     const tokens =
       await loadBffSession(sessionId)
 
-    /*
-     * Cookie هست ولی Redis session نیست.
-     * پس چیزی سمت BFF برای استفاده وجود ندارد.
-     */
     if (!tokens) {
       await clearSessionCookie()
 
@@ -72,19 +65,10 @@ export async function POST(
       )
     }
 
-    /*
-     * اول Django:
-     * - refresh blacklist
-     * - AuthSession revoked_at
-     * - access فوراً invalid
-     */
     await revokeDjangoSession(
       tokens.refresh,
     )
 
-    /*
-     * فقط بعد از موفقیت revoke سمت backend.
-     */
     await deleteBffSession(
       sessionId,
     )
@@ -121,14 +105,6 @@ export async function POST(
       )
     }
 
-    /*
-     * اگر Django/Redis موقتاً unavailable باشد،
-     * cookie را حذف نمی‌کنیم.
-     *
-     * چون حذف cookie بدون revoke سمت Django
-     * باعث می‌شود session فعال ولی غیرقابل‌دسترسی
-     * برای کاربر باقی بماند.
-     */
     return Response.json(
       {
         success: false,

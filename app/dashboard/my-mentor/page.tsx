@@ -8,11 +8,21 @@ export const metadata: Metadata = {
 };
 
 export default async function MyMentorPage() {
-  const response = await getMyMentor();
+  const [result] = await Promise.allSettled([getMyMentor()]);
+  const response = result.status === "fulfilled" ? result.value : null;
 
-  if (!response.data) {
-    throw new Error(
-      response.message || "دریافت اطلاعات منتور با خطا مواجه شد."
+  if (!response?.data) {
+    return (
+      <div className="px-2 pt-3 pb-10">
+        <h1 className="sr-only">منتور من</h1>
+        <p
+          role="status"
+          className="rounded-icon bg-card-bg p-5 text-sm leading-7 text-text-muted"
+        >
+          {response?.message ||
+            "دریافت اطلاعات منتور ممکن نشد؛ لطفاً صفحه را دوباره بارگذاری کنید."}
+        </p>
+      </div>
     );
   }
 

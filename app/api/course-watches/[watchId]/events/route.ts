@@ -16,7 +16,6 @@ type RouteContext = {
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-// batch رویدادها و بازه‌های دیده‌شدهٔ ویدئو
 export async function POST(
   request: Request,
   context: RouteContext,

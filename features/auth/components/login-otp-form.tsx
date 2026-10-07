@@ -90,10 +90,6 @@ export function LoginOtpForm() {
         code,
       })
 
-      /*
-       * اینجا هیچ JWT نداریم.
-       * cookie توسط BFF ست شده.
-       */
       router.replace('/dashboard')
       router.refresh()
 
@@ -154,7 +150,6 @@ export function LoginOtpForm() {
             requestOtp.isPending ||
             !mobile.trim()
           }
-          // className="rounded-xl bg-black px-4 py-3 text-white disabled:opacity-50"
         >
           {requestOtp.isPending
             ? 'در حال ارسال...'
@@ -203,7 +198,6 @@ export function LoginOtpForm() {
           disabled={
             verifyOtp.isPending
           }
-          // className="rounded-xl border px-4 py-3 text-center text-xl tracking-[0.5em] outline-none"
         />
       </div>
 
@@ -219,7 +213,6 @@ export function LoginOtpForm() {
           verifyOtp.isPending ||
           code.length !== 6
         }
-        // className="rounded-xl bg-black px-4 py-3 text-white disabled:opacity-50"
       >
         {verifyOtp.isPending
           ? 'در حال بررسی...'
@@ -227,7 +220,6 @@ export function LoginOtpForm() {
       </Button>
 
       <Button
-        // type="button"
         variant='secondary'
         disabled={
           verifyOtp.isPending

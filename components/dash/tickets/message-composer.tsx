@@ -18,7 +18,6 @@ export default function MessageComposer({
   submitLabel: string;
   placeholder?: string;
   disabled?: boolean;
-  /** true یعنی ارسال موفق بود و فرم خالی شود */
   onSubmit: (draft: MessageDraft) => Promise<boolean>;
 }) {
   const id = useId();
@@ -28,7 +27,6 @@ export default function MessageComposer({
   const [error, setError] = useState<string | null>(null);
   const [voiceUrl, setVoiceUrl] = useState<string | null>(null);
 
-  // پیش‌نمایش پیام صوتی ضبط‌شده
   useEffect(() => {
     if (!draft.voice) {
       setVoiceUrl(null);

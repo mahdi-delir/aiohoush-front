@@ -1,8 +1,0 @@
-import type { CategoryResponse } from "@/types/category";
-import { mockGiftCat } from "@/mocks/gift-categories";
-import { ApiResponse } from "@/types/api";
-
-// GET api.aiohoush.com/gift/categories
-export async function getGiftCat(): Promise<ApiResponse<CategoryResponse>> {
-    return mockGiftCat
-}

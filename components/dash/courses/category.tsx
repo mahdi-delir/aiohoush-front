@@ -18,9 +18,6 @@ import School from "@/assets/puffy-icons/school.svg";
 import Training from "@/assets/puffy-icons/training.svg";
 import Web from "@/assets/puffy-icons/web.svg";
 
-/*
- * نام آیکون (همان مقدارهای فیلد «آیکون» دسته‌بندی در ادمین) → فایل SVG.
- */
 const iconSources = {
   school: School,
   web: Web,
@@ -35,7 +32,6 @@ const iconSources = {
   training: Training,
 } satisfies Partial<Record<CategoryIcon, unknown>>;
 
-// برای دسته‌هایی که آیکون در API ندارند (سازگاری با slugهای قدیمی)
 const iconBySlug: Record<string, CategoryIcon> = {
   web: "web",
   programming: "code",

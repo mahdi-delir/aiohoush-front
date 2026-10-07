@@ -6,11 +6,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { unreadCountQueryKey } from "@/features/announcements/use-unread-count";
 import { isPushSupported, registerServiceWorker, syncPush } from "@/features/push/push";
 
-/**
- * داخل داشبورد: service worker را ثبت می‌کند، اشتراک push را با کاربر
- * فعلی هماهنگ نگه می‌دارد و با رسیدن اعلان (وقتی اپ باز است) نشان
- * زنگوله را تازه می‌کند.
- */
 export default function PushBridge() {
   const queryClient = useQueryClient();
 

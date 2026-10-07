@@ -20,7 +20,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="fa-IR"
       dir="rtl"
       className={`${darbare.variable}  h-full antialiased`}
-      // data-splash را اسکریپت زیر قبل از hydrate تنظیم می‌کند.
       suppressHydrationWarning
     >
       <head>

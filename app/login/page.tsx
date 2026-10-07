@@ -126,7 +126,6 @@ export default async function LoginPage() {
     #000
   `,
       }}
-      // className="flex min-h-screen w-full items-center justify-center px-4"
     >
       <Image src={LOGO} width={100} height={100} alt="icon" />
       <section className="w-full max-w-md rounded-2xl p-6">

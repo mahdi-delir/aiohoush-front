@@ -62,7 +62,6 @@ export default function MyProjects() {
               <ProjectCard
                 project={project}
                 badge={
-                  // زمینهٔ تیره تا روی عکس خوانا باشد
                   <span className="block rounded-full bg-black/80">
                     <span className={`block rounded-full px-2.5 py-1 text-xs ${statusStyles[project.status]}`}>
                       {project.statusLabel}

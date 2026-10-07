@@ -24,7 +24,7 @@ function formatDate(value: string) {
 }
 
 function isInternal(link: string) {
-  return link.startsWith("/") && !link.startsWith("//");
+  return /^\/(?![/\\])/.test(link) && !/[\\\s\u0000-\u001f]/.test(link);
 }
 
 function safeExternal(link: string): string | null {
@@ -141,7 +141,6 @@ export default function NotificationList() {
   }
 
   async function markRead(id: number) {
-    // خوش‌بینانه: بلافاصله خوانده‌شده نمایش داده شود.
     setData((current) =>
       current && {
         ...current,

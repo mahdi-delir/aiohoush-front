@@ -5,15 +5,10 @@ import { usePathname } from "next/navigation";
 
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 
-/**
- * یادآوری تکمیل پروفایل؛ مسیر کاربر عوض نمی‌شود.
- * روی خود صفحهٔ پروفایل نمایش داده نمی‌شود.
- */
 export default function ProfileReminder() {
   const pathname = usePathname();
   const { data: me } = useCurrentUser();
 
-  // اگر بک‌اند هنوز این فیلد را نفرستد (undefined)، بنر نشان داده نمی‌شود.
   if (!me || me.user.is_profile_completed !== false) return null;
   if (pathname.startsWith("/dashboard/profile")) return null;
 

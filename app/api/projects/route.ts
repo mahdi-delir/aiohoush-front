@@ -5,7 +5,6 @@ export const runtime = "nodejs";
 
 const ALLOWED_PARAMS = ["kind", "q", "technology", "page"] as const;
 
-// گالری پروژه‌ها؛ فقط پارامترهای شناخته‌شده به Django می‌رود.
 export async function GET(request: Request) {
   const incoming = new URL(request.url).searchParams;
   const params = new URLSearchParams();

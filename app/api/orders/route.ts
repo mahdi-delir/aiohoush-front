@@ -7,8 +7,8 @@ import {
 } from '@/lib/django-public'
 
 import {
-  assertTrustedOrigin,
-} from '@/lib/security/origin'
+  rejectUntrustedOrigin,
+} from '@/lib/bff'
 
 
 export const runtime = 'nodejs'
@@ -32,7 +32,8 @@ export async function GET() {
 export async function POST(
   request: Request,
 ) {
-  assertTrustedOrigin(request)
+  const rejected = rejectUntrustedOrigin(request)
+  if (rejected) return rejected
 
   const body =
     await request.json()

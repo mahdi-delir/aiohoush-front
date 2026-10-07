@@ -79,9 +79,6 @@ export default function AIPage() {
     orderId: string | null;
   } | null>(null);
 
-  // بک‌اند بعد از استعلام پرداخت، کاربر را با ?payment=...&order=...
-  // به این صفحه برمی‌گرداند. این پیام فقط نمایشی است؛ وضعیت واقعی
-  // سفارش در بک‌اند ثبت شده است.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const result = params.get("payment");

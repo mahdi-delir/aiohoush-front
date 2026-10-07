@@ -8,7 +8,6 @@ const dateFormatter = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
 
 export const WALLET_CURRENCY_LABEL = "تومان";
 
-/** مبلغ ریالی API را به تومان نمایش می‌دهد (بدون علامت). */
 export function formatWalletAmount(rial: number): string {
   return numberFormatter.format(Math.trunc(Math.abs(rial) / 10));
 }

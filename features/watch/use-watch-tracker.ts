@@ -2,18 +2,6 @@
 
 import { useEffect, type RefObject } from "react";
 
-/*
- * ردیابی تماشای ویدئوی جلسه یا ویدئوی هدیه.
- *
- * - روی اولین play یک «نوبت تماشا» در سرور ساخته می‌شود و اگر کاربر
- *   قبلاً بخشی از ویدئو را دیده باشد، از همان‌جا ادامه می‌دهد.
- * - بازه‌هایی که واقعاً پخش شده‌اند (بدون seek) جمع می‌شوند و هر
- *   FLUSH_INTERVAL_MS همراه رویدادها به سرور فرستاده می‌شوند.
- * - موقع pause، پایان ویدئو، مخفی شدن تب و ترک صفحه هم ارسال می‌شود.
- *
- * محاسبهٔ درصد و تکمیل جلسه کاملاً سمت سرور است.
- */
-
 type WatchEventType =
   | "play"
   | "pause"
@@ -47,17 +35,11 @@ interface StartResponse {
 
 const FLUSH_INTERVAL_MS = 15_000;
 
-// اگر بین دو timeupdate بیش از این جابه‌جایی رخ دهد، seek حساب می‌شود.
 const MAX_CONTINUOUS_JUMP_MS = 4_000;
 
-// کمتر از این مقدار، ادامهٔ پخش ارزش پرش ندارد.
 const MIN_RESUME_MS = 5_000;
 const RESUME_END_MARGIN_MS = 10_000;
 
-/**
- * چه ویدئویی ردیابی شود: جلسهٔ دوره یا ویدئوی هدیه.
- * هر دو سمت سرور یک قالب دارند (شروع → watch_id، سپس batch رویدادها).
- */
 export type WatchTarget =
   | { kind: "session"; id: number }
   | { kind: "gift"; id: number };
@@ -79,7 +61,6 @@ export function useWatchTracker(
   target: WatchTarget | undefined,
   onProgress?: () => void,
 ) {
-  // کلید پایدار؛ با هر رندر شیء جدید ساخته می‌شود ولی ردیابی نباید از نو شروع شود.
   const targetKey = target ? `${target.kind}:${target.id}` : null;
 
   useEffect(() => {
@@ -127,7 +108,6 @@ export function useWatchTracker(
       segmentStart = null;
     }
 
-    // بخش در حال پخش را ثبت می‌کند ولی پخش ادامه دارد.
     function checkpoint() {
       if (segmentStart === null) return;
       const now = lastTime;
@@ -135,8 +115,6 @@ export function useWatchTracker(
       segmentStart = now;
     }
 
-    // arrow function (نه function declaration) تا TypeScript بررسی
-    // null بودن video در ابتدای effect را اینجا هم معتبر بداند.
     const applyResume = (resumeMs: number) => {
       const duration = durationMs();
 
@@ -209,19 +187,15 @@ export function useWatchTracker(
         const body = await response.json().catch(() => null);
 
         if (body?.success) {
-          // فقط وقتی وضعیت جلسه عوض شده، لیست جلسات تازه شود.
           const completed = Boolean(body.data?.completed);
           if (endReason || (completed && !completedReported)) {
             completedReported = completed;
             onProgress?.();
           }
         } else if (!endReason && body && body.success === false) {
-          // نوبت تماشا در سرور بسته شده؛ play بعدی نوبت جدید می‌سازد.
           watchId = null;
         }
       } catch {
-        // قطعی شبکه: دادهٔ این batch را برمی‌گردانیم تا دفعهٔ بعد برود.
-        // تکرار رویدادها در سرور با client_event_id حذف می‌شود.
         if (!endReason) {
           events = [...batch.events, ...events];
           ranges = [...batch.ranges, ...ranges];
@@ -229,8 +203,6 @@ export function useWatchTracker(
       }
     }
 
-    // ارسال هنگام ترک صفحه؛ keepalive درخواست را بعد از بسته شدن صفحه
-    // هم زنده نگه می‌دارد.
     function flushOnLeave(endReason?: EndReason) {
       if (!watchId) return;
 
@@ -251,7 +223,6 @@ export function useWatchTracker(
       }).catch(() => {});
     }
 
-    // --- رویدادهای پلیر
     const onPlay = () => {
       push("play");
       void ensureWatch();
@@ -337,7 +308,6 @@ export function useWatchTracker(
     const interval = window.setInterval(() => {
       if (video.paused) return;
 
-      // نوبت قبلی در سرور بسته شده ولی پخش ادامه دارد
       if (!watchId) {
         void ensureWatch();
         return;
@@ -349,7 +319,6 @@ export function useWatchTracker(
     }, FLUSH_INTERVAL_MS);
 
     return () => {
-      // تعویض جلسه یا خروج از صفحهٔ دوره
       flushOnLeave("navigation");
       disposed = true;
 
@@ -367,8 +336,6 @@ export function useWatchTracker(
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("pagehide", onPageHide);
     };
-    // onProgress و target عمداً در وابستگی‌ها نیستند؛ targetKey همان target
-    // است و با هر رندر عوض نمی‌شود.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoRef, targetKey]);
 }

@@ -20,7 +20,6 @@ export function ProjectCover({
   return (
     <div className={`relative overflow-hidden bg-element-bg ${className}`}>
       {src && !failed ? (
-        // عکس از دامنهٔ API می‌آید و در remotePatterns نیست.
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={src}

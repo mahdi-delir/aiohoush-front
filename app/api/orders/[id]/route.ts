@@ -6,6 +6,10 @@ import {
   forwardDjangoResponse,
 } from '@/lib/django-public'
 
+import {
+  invalidIdResponse,
+} from '@/lib/bff'
+
 
 export const runtime = 'nodejs'
 
@@ -20,6 +24,8 @@ export async function GET(
 ) {
   const { id } =
     await context.params
+
+  if (!/^\d+$/.test(id)) return invalidIdResponse()
 
   const response =
     await fetchDjango(

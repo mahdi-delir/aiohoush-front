@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 
 const MAX_DURATION_MS = 5 * 60 * 1000;
 
-// فرمتی که مرورگر پشتیبانی می‌کند: Chrome/Firefox → webm/ogg، Safari → mp4
 const MIME_CANDIDATES = [
   "audio/webm;codecs=opus",
   "audio/ogg;codecs=opus",
@@ -57,7 +56,6 @@ export default function VoiceRecorder({
     setElapsed(0);
   }
 
-  // اگر کاربر وسط ضبط صفحه را ترک کند، میکروفون آزاد شود.
   useEffect(() => () => {
     discardRef.current = true;
     recorderRef.current?.state === "recording" && recorderRef.current.stop();

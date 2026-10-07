@@ -15,11 +15,6 @@ export async function revokeDjangoSession(
     },
   )
 
-  /*
-   * 400 یعنی refresh دیگر معتبر نیست:
-   * expired / blacklisted / session revoked.
-   * از دید ما session قبلی دیگر usable نیست.
-   */
   if (
     response.ok ||
     response.status === 400

@@ -51,7 +51,6 @@ export default function WalletActions({ disabled = false }: { disabled?: boolean
         method: "POST",
         credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
-        // API مبالغ را به ریال می‌گیرد
         body: JSON.stringify({ amount_rial: amountToman * 10 }),
       });
 

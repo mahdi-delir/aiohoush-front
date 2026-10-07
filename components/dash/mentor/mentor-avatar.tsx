@@ -16,7 +16,6 @@ export default function MentorAvatar({ src, name }: { src: string | null; name: 
           alt={`عکس پروفایل ${name}`}
           fill
           sizes="112px"
-          // عکس از دامنهٔ API می‌آید و در remotePatterns نیست.
           unoptimized
           className="object-cover"
           onError={() => setFailed(true)}

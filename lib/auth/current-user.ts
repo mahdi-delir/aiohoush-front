@@ -45,9 +45,6 @@ export async function getCurrentUser():
     throw error
     }
 
-  /*
-   * Authentication / authorization failure.
-   */
   if (
     response.status === 401 ||
     response.status === 403
@@ -66,10 +63,6 @@ export async function getCurrentUser():
     throw new CurrentUserServiceError()
   }
 
-  /*
-   * اگر قرارداد API برای خطای business
-   * success:false برگرداند.
-   */
   if (
     response.ok &&
     body.success === false

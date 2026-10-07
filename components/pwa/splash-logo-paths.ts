@@ -1,4 +1,3 @@
-// مسیرهای لوگوی آیوهوش (public/logo.svg) برای نمایش بدون درخواست شبکه.
 export const LOGO_VIEWBOX = "0 0 332.44 356.95";
 
 export const LOGO_PATHS = [

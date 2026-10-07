@@ -1,11 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  /* --background: #ffffff;
-  --foreground: #171717; */
     --background: #0a0a0a;
     --foreground: #ededed;
-  /* Colors */
   --color-primary-green: #00b78e;
   --color-primary-green-hover: #00a3a9;
   --color-primary-green-active: #008f95;
@@ -21,7 +18,6 @@
   --color-approve: #49e2c8;
   --color-approve-bg: #012e34;
 
-  /* Radius */
   --radius-icon: 24px;
   --radius-square: 40px;
 }
@@ -32,7 +28,6 @@
 
   --font-sans: var(--font-darbare);
 
-  /* Colors */
   --color-primary-green: var(--color-primary-green);
   --color-primary-green-hover: var(--color-primary-green-hover);
   --color-primary-green-active: var(--color-primary-green-active);
@@ -49,7 +44,6 @@
   --color-approve-bg: var(--color-approve-bg);
   --color-danger-bg: var(--color-danger-bg);
 
-  /* Radius */
   --radius-icon: var(--radius-icon);
   --radius-square: var(--radius-square);
 }
@@ -66,7 +60,6 @@ body {
   color: var(--foreground);
 }
 
-/* اسپلش داخل اپ (components/pwa/splash-screen.tsx) */
 html[data-splash="off"] #app-splash {
   display: none;
 }
@@ -82,10 +75,6 @@ html[data-splash="off"] #app-splash {
   }
 }
 
-/* ------------------------------------------------------------------
- * انیمیشن جابه‌جایی صفحه‌ها (React ViewTransition — app/dashboard/template.tsx)
- * الگوی راهنمای رسمی Next.js: خروج سریع، ورود نرم‌تر و با کمی تأخیر.
- * ------------------------------------------------------------------ */
 :root {
   --page-exit: 150ms;
   --page-enter: 220ms;
@@ -125,7 +114,6 @@ html[data-splash="off"] #app-splash {
   }
 }
 
-/* هدر ثابت می‌ماند؛ فقط محتوا جابه‌جا می‌شود. */
 ::view-transition-group(site-header) {
   animation: none;
   z-index: 100;
@@ -137,7 +125,6 @@ html[data-splash="off"] #app-splash {
   animation: none;
 }
 
-/* کلیک‌ها در طول انیمیشن گم نشوند. */
 ::view-transition {
   pointer-events: none;
 }

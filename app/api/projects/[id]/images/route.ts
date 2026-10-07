@@ -4,7 +4,6 @@ import { forwardDjangoResponse } from "@/lib/django-public";
 
 export const runtime = "nodejs";
 
-// افزودن یک عکس به پروژه (multipart، فیلد «image»)
 export async function POST(
   request: Request,
   context: { params: Promise<{ id: string }> },

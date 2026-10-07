@@ -63,7 +63,6 @@ export async function postDjangoJson(
       );
     }
 
-    // برای throttle درخواست OTP و ثبت IP نشست
     setClientIpHeaders(
       requestHeaders,
       incomingHeaders,

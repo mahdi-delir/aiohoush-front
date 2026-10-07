@@ -7,7 +7,6 @@ import {
 
 export const runtime = "nodejs";
 
-// شروع شارژ آنلاین کیف پول؛ آدرس درگاه برمی‌گردد.
 export async function POST(request: Request) {
   try {
     assertTrustedOrigin(request);

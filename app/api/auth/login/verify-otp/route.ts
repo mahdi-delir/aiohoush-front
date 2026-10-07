@@ -113,28 +113,17 @@ export async function POST(
     const previousSessionId =
       await getSessionId()
 
-    /*
-     * اگر همین مرورگر قبلاً login بوده،
-     * session قبلی Django + Redis را revoke می‌کنیم.
-     */
     if (previousSessionId) {
       try {
         await revokeBffSession(
           previousSessionId,
         )
       } catch {
-        /*
-         * Django برای login جدید session ساخته،
-         * پس اگر تعویض session قبلی شکست خورد،
-         * session جدید را هم تا جای ممکن revoke می‌کنیم.
-         */
         try {
           await revokeDjangoSession(
             tokens.refresh,
           )
-        } catch {
-          // هیچ tokenای را log نکن.
-        }
+        } catch {}
 
         return Response.json(
           {
@@ -150,13 +139,9 @@ export async function POST(
       }
     }
 
-    let sessionId: string
-
     try {
       const session =
         await createBffSession(tokens)
-
-      sessionId = session.sessionId
 
       try {
         await setSessionCookie(
@@ -172,20 +157,13 @@ export async function POST(
           await revokeDjangoSession(
             tokens.refresh,
           )
-        } catch {
-          // token را log نکن.
-        }
+        } catch {}
 
         await clearSessionCookie()
 
         throw error
       }
     } catch {
-      /*
-       * اگر session قبلی revoke شده باشد ولی
-       * session جدید نتواند ایجاد شود، cookie
-       * قدیمی را باقی نمی‌گذاریم.
-       */
       if (previousSessionId) {
         await clearSessionCookie()
       }
@@ -203,9 +181,6 @@ export async function POST(
       )
     }
 
-    /*
-     * JWTها نباید به browser برگردند.
-     */
     const {
       data: _tokens,
       ...publicBody

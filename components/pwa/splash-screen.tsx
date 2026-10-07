@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 
 import { LOGO_PATHS, LOGO_VIEWBOX } from "./splash-logo-paths";
 
-// حداقل زمان نمایش از لحظهٔ شروع بارگذاری صفحه، تا اسپلش فقط یک چشمک نباشد.
 const MIN_VISIBLE_MS = 1200;
 const FADE_MS = 400;
 

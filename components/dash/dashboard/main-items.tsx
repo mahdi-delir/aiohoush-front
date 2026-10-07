@@ -26,27 +26,12 @@ interface DashboardMenuItem {
   href: string;
   icon: typeof Gift;
 
-  /*
-   * اگر permission نداشته باشیم،
-   * آیتم نباید تصادفی نمایش داده شود.
-   */
   permission?: string;
 
-  /*
-   * نمایش برای اعضای یک گروه (مثلاً «دانشجویان»).
-   */
   group?: string;
 
-  /*
-   * فقط برای آیتم‌هایی که عمداً
-   * برای همه کاربران لاگین‌شده هستند.
-   */
   alwaysVisible?: boolean;
 
-  /*
-   * برای قابلیت‌هایی که هنوز
-   * backend آن‌ها آماده نشده.
-   */
   enabled: boolean;
 
   order: number;
@@ -59,7 +44,6 @@ const menuItems: DashboardMenuItem[] = [
     icon: Gift,
     permission: PERMISSIONS.course.view,
 
-    // هنوز permission واقعی Gift نداریم.
     enabled: true,
 
     order: 1,
@@ -82,7 +66,6 @@ const menuItems: DashboardMenuItem[] = [
     href: "/projects",
     icon: Code,
 
-    // گالری پروژه‌ها برای همهٔ کاربران واردشده است.
     enabled: true,
     alwaysVisible: true,
 
@@ -95,7 +78,6 @@ const menuItems: DashboardMenuItem[] = [
     icon: ChatBot,
     alwaysVisible: true,
 
-    // هنوز permission واقعی AI نداریم.
     enabled: true,
 
     order: 4,
@@ -106,7 +88,6 @@ const menuItems: DashboardMenuItem[] = [
     href: "/wallet",
     icon: Wallet,
 
-    // کیف پول برای همهٔ نقش‌ها (دانشجو، استاد، کارمند و ...) است.
     alwaysVisible: true,
     enabled: true,
 
@@ -118,10 +99,6 @@ const menuItems: DashboardMenuItem[] = [
     href: "/manual",
     icon: UserManual,
 
-    /*
-     * راهنما permission امنیتی نیاز ندارد.
-     * هر کاربر لاگین‌شده می‌تواند ببیند.
-     */
     alwaysVisible: true,
     enabled: true,
 
@@ -166,18 +143,10 @@ export default function MainItems() {
 
   const visibleItems = menuItems
     .filter((item) => {
-      /*
-       * قابلیتی که هنوز آماده نیست
-       * اصلاً نمایش داده نشود.
-       */
       if (!item.enabled) {
         return false;
       }
 
-      /*
-       * آیتم عمومی برای کاربران
-       * authenticated.
-       */
       if (item.alwaysVisible) {
         return true;
       }
@@ -186,10 +155,6 @@ export default function MainItems() {
         return true;
       }
 
-      /*
-       * نبود permission به معنی
-       * اجازه نیست.
-       */
       if (!item.permission) {
         return false;
       }

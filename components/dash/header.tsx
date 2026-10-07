@@ -16,8 +16,6 @@ import NotificationBell from "./notifications/notification-bell";
 
 export default function DashboardHeader() {
   const pathname = usePathname();
-  // منو فقط برای همان صفحه‌ای که در آن باز شده باز می‌ماند؛ با رفتن به
-  // صفحهٔ دیگر (از هر راهی) خودش بسته می‌شود.
   const [openOnPath, setOpenOnPath] = useState<string | null>(null);
   const open = openOnPath === pathname;
   const setOpen = (value: boolean) => setOpenOnPath(value ? pathname : null);
@@ -25,7 +23,6 @@ export default function DashboardHeader() {
   const routeKey = segments.join("/");
   const router = useRouter();
 
-  // مسیرهای پویا (مثلاً tickets/12) عنوان بخش اصلی را می‌گیرند.
   const currentRoute =
     dashboardRoutes[routeKey as DashboardRoute] ??
     dashboardRoutes[segments[0] as DashboardRoute] ??
@@ -34,7 +31,6 @@ export default function DashboardHeader() {
   const isHomeRoute = segments.length === 0;
 
   return (
-    // نام view-transition: هدر هنگام جابه‌جایی صفحه‌ها ثابت می‌ماند (globals.css)
     <header className="flex justify-between items-center" style={{ viewTransitionName: "site-header" }}>
       <div className="flex items-center gap-4">
         <Image src="/logo.svg" width={28} height={28} alt="aiohoush-logo" />
@@ -64,9 +60,6 @@ export default function DashboardHeader() {
           />
         )}
         <NotificationBell />
-        {/* {isHomeRoute && (
-          <Image src={Search} alt="search-icon" width={28} height={28} />
-        )} */}
       </div>
       <Modal
         children={<MenuItems onNavigate={() => setOpen(false)} />}

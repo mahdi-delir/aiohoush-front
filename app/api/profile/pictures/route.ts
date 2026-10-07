@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchDjango } from "@/lib/django";
+import { rejectUntrustedOrigin } from "@/lib/bff";
 
 async function proxy(response: Response) {
   const text = await response.text();
@@ -57,6 +58,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const rejected = rejectUntrustedOrigin(request);
+  if (rejected) return rejected;
+
   const formData = await request.formData();
 
   const response = await fetchDjango(

@@ -2,11 +2,6 @@
 
 import { useSyncExternalStore } from "react";
 
-/*
- * نسخهٔ build که همین الان در مرورگر اجرا می‌شود (همان BUILD_ID سرور در
- * لحظهٔ باز شدن اپ). UpdatePrompt آن را تنظیم می‌کند و منو نمایشش می‌دهد
- * تا بشود با چشم دید به‌روزرسانی واقعاً انجام شده یا نه.
- */
 let runningVersion: string | null = null;
 const listeners = new Set<() => void>();
 
@@ -31,7 +26,6 @@ export function useRunningVersion() {
   );
 }
 
-/** شکل کوتاه برای نمایش */
 export function shortVersion(version: string) {
   return version.slice(0, 7);
 }

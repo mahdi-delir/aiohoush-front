@@ -8,7 +8,6 @@ export async function GET() {
   return forwardDjangoResponse(await fetchDjango("/ticket/", { method: "GET" }));
 }
 
-// ایجاد تیکت (multipart: متن، پیوست، پیام صوتی)
 export async function POST(request: Request) {
   const rejected = rejectUntrustedOrigin(request);
   if (rejected) return rejected;

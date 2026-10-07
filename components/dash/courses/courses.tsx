@@ -8,7 +8,7 @@ import { useSearchParams } from "next/navigation";
 export default function CourseVideoList() {
   const searchParams = useSearchParams();
   const category = searchParams.get("category") ?? "";
-  const { data: res, isPending, isError } = useCourseList(category);
+  const { data: res } = useCourseList(category);
   const { data: categories } = useCourseCategory();
 
 

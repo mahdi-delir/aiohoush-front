@@ -16,11 +16,8 @@ interface VideoPlayerProps extends Omit<
 > {
   item: VideoItem;
   homeworkUpload?: UploadTarget;
-  /** شناسهٔ جلسهٔ دوره برای ثبت پیشرفت تماشا. */
   trackSessionId?: number;
-  /** شناسهٔ ویدئوی هدیه برای ثبت پیشرفت تماشا. */
   trackGiftId?: number;
-  /** وقتی ویدئو تکمیل شد یا نوبت تماشا تمام شد. */
   onWatchProgress?: () => void;
 }
 
@@ -76,7 +73,6 @@ export function Video({
 
     let hls: Hls | null = null;
 
-    // فایل معمولی (مثلاً mp4) مستقیم پخش می‌شود؛ hls.js فقط برای m3u8.
     const isHls = /\.m3u8(\?|#|$)/i.test(item.playerUrl);
 
     if (!isHls) {
@@ -145,9 +141,6 @@ export function Video({
               label="ارسال تمرین"
             />
           </div>
-          // <Button variant="secondary" size="sm" className="w-fit m-4">
-          //   ارسال تمرین
-          // </Button>
         )}
         {item?.has_source_code && item.source_code_url && (
           <div className="m-4 flex flex-col items-end gap-1">
@@ -182,19 +175,13 @@ function getFileName(
   if (encoded) {
     try {
       return decodeURIComponent(encoded[1]);
-    } catch {
-      // ادامه با filename ساده
-    }
+    } catch {}
   }
 
   const plain = /filename="?([^";]+)"?/i.exec(contentDisposition);
   return plain?.[1] ?? "source-code";
 }
 
-/*
- * سورس کد از BFF (same-origin) دریافت می‌شود تا توکن کاربر
- * سمت سرور اضافه و دسترسی در Django بررسی شود.
- */
 async function downloadSessionSourceCode(
   sessionId: number,
 ): Promise<void> {
@@ -205,8 +192,6 @@ async function downloadSessionSourceCode(
     },
   );
 
-  // خطاهای قابل‌پیش‌بینی به‌صورت JSON با success=false برمی‌گردند
-  // (حتی با HTTP 200)؛ فایل واقعی هرگز JSON نیست.
   const contentType = response.headers.get("Content-Type") ?? "";
 
   if (!response.ok || contentType.includes("application/json")) {
@@ -228,6 +213,5 @@ async function downloadSessionSourceCode(
   link.click();
   link.remove();
 
-  // کمی صبر تا مرورگر دانلود را شروع کند
   setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
 }

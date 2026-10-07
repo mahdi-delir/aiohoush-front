@@ -69,29 +69,33 @@ export default function ProfilePage() {
     setBusy(true);
     setMessage("");
     setError("");
-    const response = await fetch("/api/profile", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        first_name: profile.first_name.trim(),
-        last_name: profile.last_name.trim(),
-        national_id: normalizeDigits(profile.national_id || ""),
-        email: profile.email || "",
-        telegram_id: profile.telegram_id || "",
-        address: profile.address || "",
-        bio: profile.bio || "",
-      }),
-    });
-    const data = await response.json();
-    if (response.ok && data?.success !== false) {
-      setProfile(data);
-      setMessage("پروفایل ذخیره شد.");
-      // تا بنر «تکمیل پروفایل» بلافاصله به‌روز شود.
-      void queryClient.invalidateQueries({ queryKey: currentUserQueryKey });
-    } else {
-      setError(errorText(data));
+    try {
+      const response = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          first_name: profile.first_name.trim(),
+          last_name: profile.last_name.trim(),
+          national_id: normalizeDigits(profile.national_id || ""),
+          email: profile.email || "",
+          telegram_id: profile.telegram_id || "",
+          address: profile.address || "",
+          bio: profile.bio || "",
+        }),
+      });
+      const data = await response.json().catch(() => null);
+      if (response.ok && data && data.success !== false) {
+        setProfile(data);
+        setMessage("پروفایل ذخیره شد.");
+        void queryClient.invalidateQueries({ queryKey: currentUserQueryKey });
+      } else {
+        setError(errorText(data));
+      }
+    } catch {
+      setError("ارتباط با سرور برقرار نشد. دوباره تلاش کنید.");
+    } finally {
+      setBusy(false);
     }
-    setBusy(false);
   }
 
   function upload(event: ChangeEvent<HTMLInputElement>) {
@@ -128,7 +132,6 @@ export default function ProfilePage() {
         };
       }
 
-      // خطای قابل‌پیش‌بینی با HTTP 200 و success=false می‌آید.
       if (xhr.status >= 200 && xhr.status < 300 && data?.success !== false) {
         setPictures((items) => [data, ...items]);
         setUploadProgress(100);

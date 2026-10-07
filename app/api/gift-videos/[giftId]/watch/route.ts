@@ -4,7 +4,6 @@ import { forwardDjangoResponse } from "@/lib/django-public";
 
 export const runtime = "nodejs";
 
-// شروع تماشای ویدئوی هدیه
 export async function POST(
   request: Request,
   context: { params: Promise<{ giftId: string }> },

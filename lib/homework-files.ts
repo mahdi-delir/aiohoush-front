@@ -1,5 +1,3 @@
-// باید با HOMEWORK_ALLOWED_EXTENSIONS در بک‌اند
-// (aiohoush/utilities/uploads.py) یکی بماند.
 export const HOMEWORK_ACCEPT = [
   ".zip", ".rar", ".7z",
   ".pdf", ".txt", ".md",

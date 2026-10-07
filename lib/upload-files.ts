@@ -44,10 +44,6 @@ export async function uploadFiles<T = unknown>({
     body.append(fileField, file, file.name);
   }
 
-  /*
-   * درخواست‌های داخلی باید از BFF عبور کنند
-   * تا Authorization توسط fetchDjango اضافه شود.
-   */
   if (url.startsWith("/api/")) {
     onProgress?.(0);
 
@@ -72,7 +68,6 @@ export async function uploadFiles<T = unknown>({
     return result as T;
   }
 
-  // آپلودهای قدیمی که URL مستقیم دارند
   const response = await api.post<T>(url, body, {
     adapter: "xhr",
     signal,

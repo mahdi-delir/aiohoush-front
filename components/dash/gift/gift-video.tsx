@@ -90,7 +90,6 @@ export default function GiftVideos() {
         item={toVideoItem(selectedVideo)}
         poster={selectedVideo.cover ?? undefined}
         trackGiftId={selectedVideo.id}
-        // تا هیروی صفحهٔ اول («هدیه را دیده») به‌روز شود.
         onWatchProgress={() =>
           void queryClient.invalidateQueries({ queryKey: currentUserQueryKey })
         }

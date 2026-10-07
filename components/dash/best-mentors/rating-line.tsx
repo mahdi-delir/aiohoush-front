@@ -2,7 +2,6 @@ import type { RankedMentor } from "@/types/mentor-leaderboard";
 import { formatMentorRating } from "@/lib/mentor-leaderboard";
 import { RatingIcon } from "./leaderboard-icons";
 
-/** امتیاز ستاره‌ای دانش‌آموزان (جدا از امتیاز فروش). */
 export default function RatingLine({
   mentor,
   className = "",

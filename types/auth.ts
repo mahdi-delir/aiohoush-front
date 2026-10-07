@@ -3,7 +3,6 @@ export interface CurrentUser {
   first_name: string
   last_name: string
   mobile: string
-  /** نام و نام خانوادگی پر شده باشد */
   is_profile_completed: boolean
 }
 

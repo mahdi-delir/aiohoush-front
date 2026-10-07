@@ -8,7 +8,6 @@ export interface VideoItem {
   has_source_code: boolean;
   has_homework: boolean;
   is_public: boolean;
-  /** جلسه برای این کاربر قفل است؛ playerUrl و source_code_url خالی هستند. */
   is_locked?: boolean;
   duration: string;
   watched_percent?: number;

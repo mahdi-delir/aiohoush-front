@@ -1,11 +1,11 @@
 import type { MentorLeaderboard as LeaderboardData } from "@/types/mentor-leaderboard";
-import { formatMentorRating, getTopTenMentors } from "@/lib/mentor-leaderboard";
+import { getTopTenMentors } from "@/lib/mentor-leaderboard";
 import MentorPodium from "./mentor-podium";
 import MentorProfileDialog from "./mentor-profile-dialog";
 import RankedAvatar from "./ranked-avatar";
 import RatingLine from "./rating-line";
 import RankMovement from "./rank-movement";
-import { RatingIcon, TrophyIcon } from "./leaderboard-icons";
+import { TrophyIcon } from "./leaderboard-icons";
 
 const dateFormatter = new Intl.DateTimeFormat("fa-IR", {
   year: "numeric",

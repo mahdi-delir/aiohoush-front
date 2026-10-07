@@ -19,7 +19,6 @@ export function formatSize(bytes: number) {
   return `${Math.max(1, Math.round(bytes / 1024)).toLocaleString("fa-IR")} کیلوبایت`;
 }
 
-/** فقط https؛ برای GitHub فقط github.com. */
 export function safeLink(value: string | null, github = false): string | null {
   if (!value) return null;
 
@@ -33,7 +32,6 @@ export function safeLink(value: string | null, github = false): string | null {
   }
 }
 
-/** آدرس دانلود zip از طریق BFF */
 export function projectFileUrl(fileId: number) {
   return `/api/projects/files/${fileId}`;
 }
@@ -64,7 +62,6 @@ interface ApiBody<T> {
   data?: T;
 }
 
-/** درخواست به BFF؛ خطا (HTTP یا success=false) به‌صورت Error با پیام سرور. */
 export async function projectRequest<T = unknown>(
   url: string,
   init: RequestInit = {},
@@ -80,9 +77,6 @@ export async function projectRequest<T = unknown>(
   return { data: body.data, message: body.message ?? "" };
 }
 
-/**
- * آپلود با نمایش پیشرفت (fetch پیشرفت آپلود ندارد).
- */
 export function uploadWithProgress<T = unknown>(
   url: string,
   formData: FormData,

@@ -13,7 +13,6 @@ type RouteContext = {
   }>;
 };
 
-// شروع یک نوبت تماشا برای جلسه
 export async function POST(
   request: Request,
   context: RouteContext,

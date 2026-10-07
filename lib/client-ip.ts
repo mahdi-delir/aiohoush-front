@@ -2,19 +2,6 @@ import "server-only";
 
 import { isIP } from "node:net";
 
-/*
- * IP واقعی کاربر برای ارسال به جنگو.
- *
- * دو حالت پشتیبانی می‌شود (با CLIENT_IP_HEADER):
- *
- * - x-real-ip (پیش‌فرض): proxy جلوی Next این هدر را با IP اتصال
- *   بازنویسی می‌کند، پس مقدار ارسالی کاربر به اینجا نمی‌رسد.
- *
- * - x-forwarded-for: proxy هر لایه IP اتصال را به «انتهای» این هدر
- *   اضافه می‌کند؛ ابتدای هدر را کاربر می‌تواند جعل کند. پس از انتها
- *   می‌شماریم: TRUSTED_PROXY_COUNT تعداد proxyهای مورد اعتماد بین
- *   کاربر و Next است (پیش‌فرض ۱).
- */
 const CLIENT_IP_HEADER = (
   process.env.CLIENT_IP_HEADER || "x-real-ip"
 ).toLowerCase();
@@ -52,10 +39,6 @@ export function getClientIp(headers: Headers): string | null {
   return index >= 0 ? normalizeIp(hops[index]) : null;
 }
 
-/*
- * هدرهایی که جنگو با آن IP کاربر را از BFF می‌پذیرد.
- * جنگو فقط وقتی به IP اعتماد می‌کند که کلید مشترک درست باشد.
- */
 export function setClientIpHeaders(
   target: Headers,
   incomingHeaders: Headers,

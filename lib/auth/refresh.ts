@@ -166,12 +166,6 @@ refreshSessionSingleFlight(
       throw new AuthSessionMissingError()
     }
 
-    /*
-     * اگر access عوض شده، یعنی request دیگری
-     * قبلاً refresh را انجام داده.
-     *
-     * پس همان جدیدترین pair را استفاده می‌کنیم.
-     */
     if (
       current.access !== observedAccess
     ) {
@@ -195,11 +189,6 @@ refreshSessionSingleFlight(
     }
 
     try {
-      /*
-       * بعد از گرفتن lock دوباره Redis را می‌خوانیم.
-       * ممکن است بین دو مرحله request دیگری refresh
-       * را کامل کرده باشد.
-       */
       const lockedCurrent =
         await loadBffSession(sessionId)
 
@@ -234,12 +223,6 @@ refreshSessionSingleFlight(
           error.status >= 400 &&
           error.status < 500
         ) {
-          /*
-           * اگر lock TTL تمام شده باشد ممکن است
-           * worker دیگری meanwhile refresh موفق
-           * کرده باشد. قبل از حذف session دوباره
-           * وضعیت را بررسی می‌کنیم.
-           */
           const latest =
             await loadBffSession(
               sessionId,

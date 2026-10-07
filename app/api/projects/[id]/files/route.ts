@@ -4,7 +4,6 @@ import { forwardDjangoResponse } from "@/lib/django-public";
 
 export const runtime = "nodejs";
 
-// افزودن یک فایل zip به پروژه (multipart، فیلد «file»)
 export async function POST(
   request: Request,
   context: { params: Promise<{ id: string }> },

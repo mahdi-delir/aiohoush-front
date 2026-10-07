@@ -1,6 +1,9 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
+import {
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
 
 import {
   requestLoginOtp,
@@ -17,6 +20,8 @@ export function useRequestLoginOtp() {
 
 
 export function useVerifyLoginOtp() {
+  const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: ({
       mobile,
@@ -29,5 +34,9 @@ export function useVerifyLoginOtp() {
         mobile,
         code,
       ),
+
+    onSuccess: () => {
+      queryClient.clear()
+    },
   })
 }

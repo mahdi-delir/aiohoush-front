@@ -6,20 +6,13 @@ import { useEffect, useRef, useState } from "react";
 import Bell from "@/assets/puffy-icons/bell.svg";
 import { enablePush, getPushState, type PushState } from "@/features/push/push";
 
-// یک بار در هر باز کردن اپ (sessionStorage با بستن اپ پاک می‌شود).
 const ASKED_KEY = "aiohoush-push-asked";
-// بعد از اسپلش نمایش داده شود.
 const SHOW_DELAY_MS = 2000;
 const ANIMATION_MS = 250;
 
 const focusClasses =
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-green";
 
-/**
- * تا وقتی کاربر اجازهٔ نوتیفیکیشن نداده، با هر باز شدن اپ از او اجازه
- * می‌خواهد. اگر قبلاً در مرورگر «مسدود» کرده باشد (مرورگر اجازهٔ پرسیدن
- * دوباره نمی‌دهد)، راه فعال کردن از تنظیمات را نشان می‌دهد.
- */
 export default function PushPermissionModal() {
   const [state, setState] = useState<"ask" | "blocked" | null>(null);
   const [shown, setShown] = useState(false);
@@ -32,9 +25,7 @@ export default function PushPermissionModal() {
 
     try {
       if (sessionStorage.getItem(ASKED_KEY)) return;
-    } catch {
-      // بدون sessionStorage هم کار کند
-    }
+    } catch {}
 
     let cancelled = false;
     const timer = window.setTimeout(async () => {
@@ -66,9 +57,7 @@ export default function PushPermissionModal() {
   function close() {
     try {
       sessionStorage.setItem(ASKED_KEY, "1");
-    } catch {
-      // ignore
-    }
+    } catch {}
     setShown(false);
     window.setTimeout(() => setState(null), ANIMATION_MS);
   }
@@ -86,7 +75,6 @@ export default function PushPermissionModal() {
         setState("blocked");
         return;
       }
-      // کاربر پنجرهٔ مرورگر را بدون انتخاب بست؛ دفعهٔ بعد دوباره می‌پرسیم.
       close();
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "فعال‌سازی ممکن نشد.");

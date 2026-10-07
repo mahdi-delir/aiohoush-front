@@ -40,7 +40,6 @@ export const statusStyles: Record<TicketStatus, string> = {
   closed: "bg-element-bg text-text-muted",
 };
 
-/** آدرس فایل از طریق BFF (Django مستقیم در دسترس مرورگر نیست). */
 export function ticketFileUrl(messageId: number, kind: "attachment" | "voice") {
   return `/api/tickets/files/${messageId}/${kind}`;
 }

@@ -16,10 +16,6 @@ import {
   useRejectOrder,
 } from '@/features/orders/hooks/use-orders'
 
-import {
-  PERMISSIONS,
-} from '@/config/permissions'
-
 
 export default function OrderPage() {
   const params =

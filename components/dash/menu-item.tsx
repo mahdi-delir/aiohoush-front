@@ -8,7 +8,6 @@ import { shortVersion, useRunningVersion } from "@/components/pwa/running-versio
 export default function MenuItems({
   onNavigate,
 }: {
-  /** با انتخاب هر گزینه منو بسته شود. */
   onNavigate?: () => void;
 }) {
   const { data: me } = useCurrentUser();

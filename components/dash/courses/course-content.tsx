@@ -6,7 +6,6 @@ import Image from "next/image";
 import Left from "@/assets/puffy-icons/left.svg";
 import { useId, useRef, useState } from "react";
 import CourseHomework from "./course-homework";
-import SessionHomework from "./session-homework";
 import { useQueryClient } from "@tanstack/react-query";
 import { courseQueryOptions } from "@/features/queries/course-query";
 const courseTabs = [
@@ -25,7 +24,6 @@ export default function CourseContent({ slug }: CourseContentProps) {
   const { data: res, isPending, isError } = useCourse(slug);
   const queryClient = useQueryClient();
 
-  // بعد از تکمیل یا پایان یک جلسه، درصدها و وضعیت دوره تازه شوند.
   const refreshCourse = () => {
     void queryClient.invalidateQueries({
       queryKey: courseQueryOptions(slug).queryKey,
@@ -84,7 +82,6 @@ export default function CourseContent({ slug }: CourseContentProps) {
             }
           />
         ) : course?.course.intro_video ? (
-          // تا وقتی جلسه‌ای انتخاب نشده، ویدئوی معرفی دوره پخش می‌شود.
           <Video
             key="course-intro"
             item={{
@@ -145,7 +142,6 @@ export default function CourseContent({ slug }: CourseContentProps) {
               else return;
               event.preventDefault();
               tabRefs.current[next]?.focus();
-              // Manual activation: Enter/Space activates the focused button.
             }}
           >
             {tab.label}
@@ -275,10 +271,10 @@ export default function CourseContent({ slug }: CourseContentProps) {
         hidden={activeTab !== "homework"}
         tabIndex={0}
       >
-        {activeTab === "homework" && (
+        {activeTab === "homework" && course && (
           <CourseHomework
-            key={course?.course.id}
-            courseId={course?.course.id ?? 1}
+            key={course.course.id}
+            courseId={course.course.id}
           />
         )}
       </section>

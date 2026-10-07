@@ -50,9 +50,7 @@ export function assertTrustedOrigin(
       ) {
         return;
       }
-    } catch {
-      // Invalid Referer
-    }
+    } catch {}
   }
 
   throw new InvalidOriginError();

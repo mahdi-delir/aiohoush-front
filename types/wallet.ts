@@ -1,8 +1,6 @@
-/** همهٔ مبالغ به ریال؛ نمایش به تومان با wallet-format انجام می‌شود. */
 export interface WalletData {
   currency: "IRR";
   balance: number;
-  /** واریزهای ثبت‌شده‌ای که هنوز حسابداری تأیید نکرده */
   pending_deposits: number;
   transactions: Transaction[];
 }

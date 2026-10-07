@@ -7,7 +7,6 @@ export interface TicketSummary {
   subject: string;
   department: TicketDepartment;
   departmentLabel: string;
-  /** نام منتور/استاد یا نام بخش */
   recipient: string;
   courseTitle: string | null;
   status: TicketStatus;

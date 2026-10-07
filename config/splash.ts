@@ -1,9 +1,3 @@
-/*
- * صفحهٔ شروع (splash) اپ نصب‌شده روی آیفون و آیپد.
- * iOS برای هر اندازهٔ صفحه یک عکس دقیق می‌خواهد؛ عکس‌ها در public/splash
- * هستند (لوگوی سبز روی مشکی + «آیوهوش»). اندروید splash را خودش از
- * app.webmanifest (background_color + آیکون) می‌سازد.
- */
 export const appleStartupImages = [
   { url: "/splash/apple-splash-640x1136.png", media: "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" },
   { url: "/splash/apple-splash-750x1334.png", media: "(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" },

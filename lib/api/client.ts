@@ -47,10 +47,6 @@ export async function apiFetch<T>(
       ...init,
       headers,
 
-      /*
-       * APIهای ما same-origin هستند.
-       * Cookie __Host-session به BFF ارسال می‌شود.
-       */
       credentials: 'same-origin',
     },
   )
@@ -60,9 +56,7 @@ export async function apiFetch<T>(
   try {
     body =
       await response.json() as ApiResponse<T>
-  } catch {
-    // response غیر JSON
-  }
+  } catch {}
 
   if (!body) {
   throw new ApiClientError(

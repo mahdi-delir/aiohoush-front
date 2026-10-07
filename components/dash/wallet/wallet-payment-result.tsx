@@ -26,7 +26,6 @@ function isPaymentResult(value: string | null): value is PaymentResult {
   return value === "paid" || value === "failed" || value === "pending";
 }
 
-// بعد از بازگشت از درگاه، بک‌اند با ?payment=... به این صفحه برمی‌گرداند.
 export default function WalletPaymentResult() {
   const [result, setResult] = useState<PaymentResult | null>(null);
 

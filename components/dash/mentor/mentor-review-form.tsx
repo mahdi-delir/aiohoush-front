@@ -42,7 +42,6 @@ export default function MentorReviewForm({
         throw new Error(body?.message || "ثبت نظر با خطا مواجه شد.");
       }
 
-      // صفحه از سرور دوباره خوانده می‌شود تا نظر و میانگین به‌روز شوند.
       router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "ثبت نظر با خطا مواجه شد.");

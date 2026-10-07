@@ -14,7 +14,6 @@ async function fetchUnreadCount(): Promise<number> {
   return Number(body.data?.unreadCount) || 0;
 }
 
-/** تعداد اعلان‌های خوانده‌نشده برای نشان زنگوله؛ هر دقیقه و با برگشت به اپ تازه می‌شود. */
 export function useUnreadCount() {
   return useQuery({
     queryKey: unreadCountQueryKey,

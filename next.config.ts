@@ -1,16 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   experimental: {
-    /*
-     * تعداد worker های build. پیش‌فرض = تعداد هستهٔ سرور build (روی
-     * رانفلر ۷۴)، که هرکدام یک پروسهٔ Node جدا است و build با کمبود
-     * حافظه (OOMKilled) متوقف می‌شد.
-     */
     cpus: 2,
   },
-  // service worker نوتیفیکیشن (public/sw.js) — طبق راهنمای PWA در مستندات Next.js
   async headers() {
     return [
       {

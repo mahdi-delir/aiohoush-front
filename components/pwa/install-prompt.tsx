@@ -87,10 +87,7 @@ export default function InstallPrompt() {
         DISMISS_KEY,
         String(Date.now() + 7 * 24 * 60 * 60 * 1000),
       );
-    } catch {
-      // در مرورگرهایی که ذخیره‌سازی مسدود است،
-      // فقط در همین بازدید بسته می‌شود.
-    }
+    } catch {}
   }
 
   async function install() {

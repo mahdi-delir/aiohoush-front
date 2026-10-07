@@ -8,7 +8,6 @@ export async function GET() {
   return forwardDjangoResponse(await fetchDjango("/project/mine/", { method: "GET" }));
 }
 
-// ثبت پروژه (multipart: فیلدها + عکس‌ها)
 export async function POST(request: Request) {
   const rejected = rejectUntrustedOrigin(request);
   if (rejected) return rejected;

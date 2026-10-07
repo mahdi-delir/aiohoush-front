@@ -1,17 +1,12 @@
 "use client";
 
-/*
- * Web Push در مرورگر: ثبت service worker، گرفتن اجازه و ثبت اشتراک
- * این دستگاه در سرور. روی آیفون فقط داخل اپ نصب‌شده (iOS 16.4+) کار می‌کند.
- */
-
 export type PushState =
-  | "unsupported" // مرورگر پشتیبانی نمی‌کند
-  | "ios-install" // آیفون: اول باید اپ نصب شود
-  | "unavailable" // سرور هنوز کلید ندارد
-  | "default" // هنوز اجازه نخواسته‌ایم
-  | "denied" // کاربر اجازه نداده
-  | "enabled"; // فعال روی همین دستگاه
+  | "unsupported"
+  | "ios-install"
+  | "unavailable"
+  | "default"
+  | "denied"
+  | "enabled";
 
 const SW_URL = "/sw.js";
 
@@ -66,8 +61,26 @@ async function saveSubscription(subscription: PushSubscription) {
 }
 
 async function currentSubscription() {
-  const registration = await navigator.serviceWorker.ready;
-  return registration.pushManager.getSubscription();
+  const registration = await navigator.serviceWorker.getRegistration("/");
+  return registration ? registration.pushManager.getSubscription() : null;
+}
+
+function sameKey(subscription: PushSubscription, key: Uint8Array) {
+  const current = subscription.options.applicationServerKey;
+  if (!current) return true;
+  const bytes = new Uint8Array(current);
+  return bytes.length === key.length && bytes.every((value, index) => value === key[index]);
+}
+
+async function subscribe(registration: ServiceWorkerRegistration, key: string) {
+  const serverKey = base64UrlToBytes(key);
+  const existing = await registration.pushManager.getSubscription();
+  if (existing && sameKey(existing, serverKey)) return existing;
+  if (existing) await existing.unsubscribe().catch(() => false);
+  return registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: serverKey,
+  });
 }
 
 export async function getPushState(): Promise<PushState> {
@@ -82,7 +95,6 @@ export async function getPushState(): Promise<PushState> {
   return (await currentSubscription()) ? "enabled" : "default";
 }
 
-/** باید با کلیک کاربر صدا زده شود (روی آیفون الزامی است). */
 export async function enablePush(): Promise<PushState> {
   const key = await publicKey();
   if (!key) return "unavailable";
@@ -93,14 +105,7 @@ export async function enablePush(): Promise<PushState> {
   const registration = (await registerServiceWorker()) ?? (await navigator.serviceWorker.ready);
   await navigator.serviceWorker.ready;
 
-  const subscription =
-    (await registration.pushManager.getSubscription()) ??
-    (await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: base64UrlToBytes(key),
-    }));
-
-  await saveSubscription(subscription);
+  await saveSubscription(await subscribe(registration, key));
   return "enabled";
 }
 
@@ -118,10 +123,6 @@ export async function disablePush(): Promise<void> {
   await subscription.unsubscribe().catch(() => false);
 }
 
-/**
- * با هر باز شدن اپ: اگر اجازه داده شده، اشتراک این دستگاه دوباره به
- * کاربر فعلی وصل می‌شود (مثلاً بعد از ورود با حساب دیگر).
- */
 export async function syncPush(): Promise<void> {
   if (!isPushSupported() || Notification.permission !== "granted") return;
   const key = await publicKey();
@@ -129,11 +130,5 @@ export async function syncPush(): Promise<void> {
 
   const registration = (await registerServiceWorker()) ?? (await navigator.serviceWorker.ready);
   await navigator.serviceWorker.ready;
-  const subscription =
-    (await registration.pushManager.getSubscription()) ??
-    (await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: base64UrlToBytes(key),
-    }));
-  await saveSubscription(subscription);
+  await saveSubscription(await subscribe(registration, key));
 }

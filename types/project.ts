@@ -48,10 +48,8 @@ export interface ProjectDetail extends Omit<ProjectCard, "technologies" | "autho
   demoUrl: string | null;
   isMine: boolean;
   createdAt: string;
-  /** فقط برای صاحب پروژه، استاد دوره و مدیر؛ بقیه null */
   files: ProjectFileItem[] | null;
   author: { name: string; bio: string; avatar: string | null } | null;
-  /** فقط برای صاحب پروژه */
   status?: ProjectStatus;
   statusLabel?: string;
   rejectionReason?: string | null;

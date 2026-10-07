@@ -45,7 +45,6 @@ export default function ProjectGallery() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // جست‌وجو بعد از توقف تایپ
   useEffect(() => {
     const timer = window.setTimeout(() => {
       setQuery(search.trim());
