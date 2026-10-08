@@ -19,13 +19,12 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: [
     "192.168.1.*",
   ],
-  images:{
+  images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'encrypted-tbn0.gstatic.com',
-        port: '',
-        
+        protocol: "https",
+        hostname: "api.aiohoush.com",
+        pathname: "/**",
       },
     ],
   },
