@@ -66,6 +66,19 @@ html[data-app="standalone"] body {
   touch-action: pan-x pan-y;
 }
 
+html[data-app="standalone"] {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html[data-app="standalone"] :is(input, textarea, [contenteditable="true"]) {
+  -webkit-touch-callout: default;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 html[data-splash="off"] #app-splash {
   display: none;
 }
