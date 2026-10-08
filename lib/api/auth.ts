@@ -30,7 +30,7 @@ export interface ActiveSession {
 export async function requestLoginOtp(
   mobile: string,
 ) {
-  return apiFetch<undefined>(
+  return apiFetch<{ expires_in?: number }>(
     '/api/auth/login/request-otp/',
     {
       method: 'POST',

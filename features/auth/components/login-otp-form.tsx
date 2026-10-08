@@ -21,8 +21,15 @@ import {
   useVerifyLoginOtp,
 } from '../hooks/use-login-otp'
 import { LoginDevices } from './login-devices'
+import {
+  OtpCountdown,
+  useSecondsLeft,
+} from './otp-countdown'
 import Input from '@/components/ui/text-input'
 import Button from '@/components/ui/button'
+
+
+const DEFAULT_OTP_SECONDS = 120
 
 
 type Step =
@@ -49,6 +56,12 @@ export function LoginOtpForm() {
   const [deviceLimit, setDeviceLimit] =
     useState<DeviceLimit | null>(null)
 
+  const [otpDeadline, setOtpDeadline] =
+    useState<number | null>(null)
+
+  const secondsLeft =
+    useSecondsLeft(otpDeadline)
+
   const requestOtp =
     useRequestLoginOtp()
 
@@ -56,11 +69,7 @@ export function LoginOtpForm() {
     useVerifyLoginOtp()
 
 
-  async function handleRequestOtp(
-    event: FormEvent<HTMLFormElement>,
-  ) {
-    event.preventDefault()
-
+  async function sendOtp() {
     setMessage(null)
 
     try {
@@ -69,6 +78,14 @@ export function LoginOtpForm() {
           mobile,
         )
 
+      const seconds =
+        response.data?.expires_in ??
+        DEFAULT_OTP_SECONDS
+
+      setOtpDeadline(
+        Date.now() + seconds * 1000,
+      )
+      setCode('')
       setMessage(response.message)
       setStep('otp')
 
@@ -84,6 +101,14 @@ export function LoginOtpForm() {
         'خطایی در ارتباط با سرور رخ داد.',
       )
     }
+  }
+
+
+  function handleRequestOtp(
+    event: FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault()
+    void sendOtp()
   }
 
 
@@ -239,6 +264,12 @@ export function LoginOtpForm() {
             verifyOtp.isPending
           }
         />
+
+        <OtpCountdown
+          secondsLeft={secondsLeft}
+          resending={requestOtp.isPending}
+          onResend={() => void sendOtp()}
+        />
       </div>
 
       {message && (
@@ -251,8 +282,10 @@ export function LoginOtpForm() {
         type="submit"
         disabled={
           verifyOtp.isPending ||
-          code.length !== 6
+          code.length !== 6 ||
+          secondsLeft === 0
         }
+        className="disabled:opacity-50"
       >
         {verifyOtp.isPending
           ? 'در حال بررسی...'
@@ -260,6 +293,7 @@ export function LoginOtpForm() {
       </Button>
 
       <Button
+        type="button"
         variant='secondary'
         disabled={
           verifyOtp.isPending
@@ -267,6 +301,7 @@ export function LoginOtpForm() {
         onClick={() => {
           setCode('')
           setMessage(null)
+          setOtpDeadline(null)
           setStep('mobile')
         }}
         className="text-sm"
