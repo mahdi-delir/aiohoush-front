@@ -48,9 +48,7 @@ function SubmissionCard({
   item: SessionHomeworkSubmission;
 }) {
   const attachmentUrl = item.attachment
-    ? item.attachment.startsWith("http")
-      ? item.attachment
-      : `${process.env.NEXT_PUBLIC_API_URL}${item.attachment}`
+    ? `/api/homework/${item.id}/attachment`
     : null;
 
   const status = statuses[item.status];
