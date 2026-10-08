@@ -17,15 +17,28 @@ export const runtime = 'nodejs'
 export async function GET(
   request: NextRequest,
 ) {
-  const category =
-    request.nextUrl.searchParams.get(
-      'category',
-    )
+  const incoming =
+    request.nextUrl.searchParams
 
-  const query = category
-    ? `?category=${encodeURIComponent(
-        category,
-      )}`
+  const params =
+    new URLSearchParams()
+
+  const category =
+    incoming.get('category')
+
+  const search =
+    incoming.get('q')?.trim()
+
+  if (category) {
+    params.set('category', category)
+  }
+
+  if (search) {
+    params.set('q', search.slice(0, 100))
+  }
+
+  const query = params.size
+    ? `?${params.toString()}`
     : ''
 
   const response =

@@ -18,13 +18,22 @@ export interface CourseCatalogResponse {
 
 export function getCourseList(
   category: string,
+  search = '',
 ): Promise<
   ApiResponse<CourseCatalogResponse>
 > {
-  const query = category
-    ? `?category=${encodeURIComponent(
-        category,
-      )}`
+  const params = new URLSearchParams()
+
+  if (category) {
+    params.set('category', category)
+  }
+
+  if (search) {
+    params.set('q', search)
+  }
+
+  const query = params.size
+    ? `?${params.toString()}`
     : ''
 
   return apiFetch<CourseCatalogResponse>(

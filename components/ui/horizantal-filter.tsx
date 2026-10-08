@@ -25,6 +25,7 @@ export function HorizentalFilter({
   function handleCategorySelect(category: CategoryItem) {
     const params = new URLSearchParams(searchParams);
     params.set("category", category.slug);
+    params.delete("q");
     router.replace(`${pathname}?${params.toString()}`);
   }
 

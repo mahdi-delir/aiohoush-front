@@ -1,4 +1,5 @@
 import {
+  keepPreviousData,
   useQuery,
 } from '@tanstack/react-query'
 
@@ -9,14 +10,18 @@ import {
 
 export function useCourseList(
   category: string,
+  search = '',
 ) {
   return useQuery({
     queryFn: () =>
-      getCourseList(category),
+      getCourseList(category, search),
 
     queryKey: [
       'courseList',
       category,
+      search,
     ],
+
+    placeholderData: keepPreviousData,
   })
 }
