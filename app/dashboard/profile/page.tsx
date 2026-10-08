@@ -6,6 +6,7 @@ import Button from "@/components/ui/button";
 import StatusBar from "@/components/ui/status-bar";
 import { useQueryClient } from "@tanstack/react-query";
 import { currentUserQueryKey } from "@/features/auth/queries/current-user";
+import ActiveDevices from "@/components/dash/profile/active-devices";
 
 type Profile = {
   id: number;
@@ -319,6 +320,7 @@ export default function ProfilePage() {
           </Button>
         </form>
       </section>
+      <ActiveDevices />
     </main>
   );
 }

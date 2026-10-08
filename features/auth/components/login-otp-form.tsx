@@ -12,9 +12,15 @@ import {
 } from '@/lib/api/client'
 
 import {
+  getDeviceLimit,
+  type DeviceLimit,
+} from '@/lib/api/auth'
+
+import {
   useRequestLoginOtp,
   useVerifyLoginOtp,
 } from '../hooks/use-login-otp'
+import { LoginDevices } from './login-devices'
 import Input from '@/components/ui/text-input'
 import Button from '@/components/ui/button'
 
@@ -22,6 +28,7 @@ import Button from '@/components/ui/button'
 type Step =
   | 'mobile'
   | 'otp'
+  | 'devices'
 
 
 export function LoginOtpForm() {
@@ -38,6 +45,9 @@ export function LoginOtpForm() {
 
   const [message, setMessage] =
     useState<string | null>(null)
+
+  const [deviceLimit, setDeviceLimit] =
+    useState<DeviceLimit | null>(null)
 
   const requestOtp =
     useRequestLoginOtp()
@@ -77,6 +87,12 @@ export function LoginOtpForm() {
   }
 
 
+  function goToDashboard() {
+    router.replace('/dashboard')
+    router.refresh()
+  }
+
+
   async function handleVerifyOtp(
     event: FormEvent<HTMLFormElement>,
   ) {
@@ -90,10 +106,17 @@ export function LoginOtpForm() {
         code,
       })
 
-      router.replace('/dashboard')
-      router.refresh()
+      goToDashboard()
 
     } catch (error) {
+      const limit = getDeviceLimit(error)
+
+      if (limit) {
+        setDeviceLimit(limit)
+        setStep('devices')
+        return
+      }
+
       if (
         error instanceof ApiClientError
       ) {
@@ -105,6 +128,23 @@ export function LoginOtpForm() {
         'خطایی در ارتباط با سرور رخ داد.',
       )
     }
+  }
+
+
+  if (step === 'devices' && deviceLimit) {
+    return (
+      <LoginDevices
+        limit={deviceLimit}
+        onLimitChange={setDeviceLimit}
+        onExpired={(text) => {
+          setDeviceLimit(null)
+          setCode('')
+          setMessage(text)
+          setStep('mobile')
+        }}
+        onLoggedIn={goToDashboard}
+      />
+    )
   }
 
 

@@ -7,6 +7,8 @@ import {
 
 import {
   requestLoginOtp,
+  revokeAllLoginDevices,
+  revokeLoginDevice,
   verifyLoginOtp,
 } from '@/lib/api/auth'
 
@@ -34,6 +36,30 @@ export function useVerifyLoginOtp() {
         mobile,
         code,
       ),
+
+    onSuccess: () => {
+      queryClient.clear()
+    },
+  })
+}
+
+export function useFreeLoginDevice() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({
+      ticket,
+      sessionId,
+    }: {
+      ticket: string
+      sessionId: string | null
+    }) =>
+      sessionId
+        ? revokeLoginDevice(
+          ticket,
+          sessionId,
+        )
+        : revokeAllLoginDevices(ticket),
 
     onSuccess: () => {
       queryClient.clear()

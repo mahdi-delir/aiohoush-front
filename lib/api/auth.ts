@@ -1,4 +1,5 @@
 import {
+  ApiClientError,
   apiFetch,
 } from './client'
 import type {
@@ -54,6 +55,67 @@ export async function verifyLoginOtp(
       body: JSON.stringify({
         mobile,
         code,
+      }),
+    },
+  )
+}
+
+
+export interface DeviceLimit {
+  code: 'device_limit'
+  ticket: string
+  max_devices: number
+  sessions: ActiveSession[]
+}
+
+
+export function getDeviceLimit(
+  error: unknown,
+): DeviceLimit | null {
+  if (!(error instanceof ApiClientError)) {
+    return null
+  }
+
+  const data = error.response?.data as
+    | Partial<DeviceLimit>
+    | undefined
+
+  return data?.code === 'device_limit' &&
+    typeof data.ticket === 'string' &&
+    Array.isArray(data.sessions)
+    ? (data as DeviceLimit)
+    : null
+}
+
+
+export async function revokeLoginDevice(
+  ticket: string,
+  sessionId: string,
+) {
+  return apiFetch<undefined>(
+    '/api/auth/login/devices/revoke/',
+    {
+      method: 'POST',
+
+      body: JSON.stringify({
+        ticket,
+        session_id: sessionId,
+      }),
+    },
+  )
+}
+
+
+export async function revokeAllLoginDevices(
+  ticket: string,
+) {
+  return apiFetch<undefined>(
+    '/api/auth/login/devices/revoke-all/',
+    {
+      method: 'POST',
+
+      body: JSON.stringify({
+        ticket,
       }),
     },
   )

@@ -11,7 +11,7 @@ export async function POST(
 ): Promise<Response> {
   return loginThroughDjango(
     request,
-    '/auth/login/verify-otp/',
-    ({ mobile, code }) => ({ mobile, code }),
+    '/auth/login/devices/revoke-all/',
+    ({ ticket }) => ({ ticket }),
   )
 }
