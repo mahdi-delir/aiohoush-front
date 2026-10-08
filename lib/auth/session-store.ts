@@ -96,7 +96,7 @@ export async function createBffSession(
 export async function saveBffSession(
   sessionId: string,
   tokens: TokenPair,
-): Promise<void> {
+): Promise<Date> {
   const redis = await getRedis()
 
   const expiresAt =
@@ -118,6 +118,8 @@ export async function saveBffSession(
       PX: ttl,
     },
   )
+
+  return new Date(expiresAt)
 }
 
 

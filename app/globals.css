@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --background: #0a0a0a;
+  --foreground: #ededed;
   --color-primary-green: #00b78e;
   --color-primary-green-hover: #00a3a9;
   --color-primary-green-active: #008f95;
@@ -69,6 +69,7 @@ html[data-splash="off"] #app-splash {
     opacity: 0;
     transform: translateY(8px) scale(0.96);
   }
+
   to {
     opacity: 1;
     transform: none;
@@ -99,6 +100,7 @@ html[data-splash="off"] #app-splash {
     opacity: 0;
     filter: blur(2px);
   }
+
   to {
     opacity: 1;
     filter: blur(0);
@@ -109,6 +111,7 @@ html[data-splash="off"] #app-splash {
   from {
     transform: translateY(12px);
   }
+
   to {
     transform: translateY(0);
   }
@@ -118,9 +121,11 @@ html[data-splash="off"] #app-splash {
   animation: none;
   z-index: 100;
 }
+
 ::view-transition-old(site-header) {
   display: none;
 }
+
 ::view-transition-new(site-header) {
   animation: none;
 }
@@ -130,6 +135,7 @@ html[data-splash="off"] #app-splash {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   ::view-transition-old(*),
   ::view-transition-new(*),
   ::view-transition-group(*) {

@@ -6,6 +6,8 @@ import { getRedis } from '@/lib/redis'
 
 import type { TokenPair } from './refresh-cache'
 
+import { setSessionCookie } from './cookies'
+
 import {
   deleteBffSession,
   getSessionLockKey,
@@ -209,10 +211,16 @@ refreshSessionSingleFlight(
             lockedCurrent.refresh,
           )
 
-        await saveBffSession(
+        const expiresAt =
+          await saveBffSession(
+            sessionId,
+            tokens,
+          )
+
+        await setSessionCookie(
           sessionId,
-          tokens,
-        )
+          expiresAt,
+        ).catch(() => undefined)
 
         return tokens
 
