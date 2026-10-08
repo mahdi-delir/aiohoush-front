@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import ClarityProvider from "@/components/clarity-provider";
 import DashboardHeader from "../../components/dash/header";
 import PushBridge from "@/components/pwa/push-bridge";
+import SessionGuard from "@/components/auth/session-guard";
 import PushPermissionModal from "@/components/pwa/push-permission-modal";
 import ProfileReminder from "@/components/dash/profile-reminder";
 import type { Metadata } from "next";
@@ -161,6 +162,7 @@ export default async function DashboardLayout({
         }}
       >
         <ClarityProvider />
+        <SessionGuard />
 
         <DashboardHeader />
         <PushBridge />
