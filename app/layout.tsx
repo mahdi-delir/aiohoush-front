@@ -6,6 +6,7 @@ import InstallPrompt from "@/components/pwa/install-prompt";
 import UpdatePrompt from "@/components/pwa/update-prompt";
 import SplashScreen from "@/components/pwa/splash-screen";
 import { splashGateScript } from "@/components/pwa/splash-gate";
+import { appModeScript } from "@/components/pwa/app-mode";
 import { darbare } from "@/lib/utils";
 
 
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <head>
+        <script dangerouslySetInnerHTML={{ __html: appModeScript }} />
         <script dangerouslySetInnerHTML={{ __html: splashGateScript }} />
       </head>
       <body className="min-h-full flex flex-col items-center">

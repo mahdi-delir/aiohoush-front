@@ -60,6 +60,12 @@ body {
   color: var(--foreground);
 }
 
+html[data-app="standalone"],
+html[data-app="standalone"] body {
+  overscroll-behavior: none;
+  touch-action: pan-x pan-y;
+}
+
 html[data-splash="off"] #app-splash {
   display: none;
 }
